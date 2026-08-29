@@ -1,0 +1,52 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M17RMNTVMBHPCAA9QNGC8W4V",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 8,
+  "files_touched": [
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CommercialDto.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CreateFrameRequest.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/DuplicateFrameException.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/Frame.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameApiExceptionHandler.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameMapper.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameNotFoundException.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FramePageResponse.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameResponse.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSearchCriteria.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameService.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSpecifications.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSummaryResponse.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameTimeConfiguration.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/IntegrationDto.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/InvalidFrameRequestException.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/LocationDto.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/SiteDto.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/TechnicalDto.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/UpdateFrameRequest.java",
+    "src/backend/src/main/resources/application.yml",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameControllerIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameRequestValidationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameServiceTest.java",
+    "src/backend/src/test/resources/application.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 121065,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2603276,
+    "output_tokens": 48324,
+    "api_call_count": 46
+  }
+}

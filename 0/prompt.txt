@@ -1,0 +1,129 @@
+CHECKPOINT 2 — FRAME REST API ENDPOINTS
+
+Checkpoint 1 persistence foundation is complete.
+
+Before implementing anything, propose the REST API design for:
+
+POST /api/frames
+GET /api/frames/{frameId}
+PUT /api/frames/{frameId}
+GET /api/frames
+
+For each endpoint, explain:
+- request DTO
+- response DTO
+- validation
+- HTTP status codes
+- duplicate/not-found handling
+- pagination/search/filter query parameters
+- service method needed
+
+Keep frame_id immutable after creation.
+
+Do not implement history, CSV import, frontend, or modify any files yet.
+
+Keep the design simple and call out any decisions I should approve before implementation.
+
+---
+
+what do you mean by this cna you give an example to understand better
+
+Updates use simple last-write-wins semantics; optimistic locking/ETags are deferred.
+
+---
+
+I will hold this locking for now
+
+---
+
+I approve the proposed API design with the following changes:
+
+Rejected:
+1. Do not restrict frameId to URL-safe characters. Keep it required, trimmed and max 64 characters.
+
+Changes:
+2. For GET /api/frames, use a lightweight FrameSummaryResponse for the paginated list. GET /api/frames/{frameId} should return the complete FrameResponse with all frame details.
+3. Keep search filters to q, status, mediaType, environment, format and region for now.
+4. Do not introduce validation rules that are not supported by the requirements or supplied data.
+5. Keep PUT as full replacement and update-only.
+6. will hold optmistic locking for now. Do not implement special handling for multiple users updating the same frame at the same time. Keep the update flow simple for this exercise.
+
+Everything else in the proposed approach is approved.
+
+Do not implement yet. Update the proposed API design based on these decisions and call out anything else that still needs my approval.
+
+---
+
+The proposed FrameSummaryResponse fields are approved.
+
+Do not add special handling for slash-containing frameIds unless the requirements or supplied CSV require it. Keep the API simple and use normal path-variable handling.
+
+No further design changes from my side.
+You can now implement the approved Checkpoint 2 design and tests.
+Do not implement history, CSV import or frontend work.
+
+---
+
+Do we really need @Size on every optional String DTO field, or can we keep Bean Validation focused on meaningful API/business constraints and let persistence constraints handle the remaining column lengths? Don't change anything yet.
+
+---
+
+For DTO validation, keep explicit Bean Validation only for these required API fields:
+
+- frameId: @NotBlank and @Size(max = 64)
+- mediaType: @NotBlank
+- format: @NotBlank
+- environment: @NotBlank
+- status: @NotBlank
+
+For the remaining optional fields, remove @Size constraints unless there is an explicit requirement that justifies them.
+
+Also review @Digits on latitude, longitude and impactWeight. Keep them only if they represent a real domain/API requirement rather than just mirroring database precision.
+
+Do not add new validation rules that are not stated or implied by the exercise requirements.
+
+For createFrame, also fix the broad DataIntegrityViolationException handling:
+- existing frameId -> 409
+- concurrent duplicate frameId -> 409
+- other database integrity failures must not be incorrectly reported as duplicate frame errors
+
+please do these changes 
+
+After making the changes:
+- run the full backend test suite
+- update/add focused tests where needed for the changed behaviour
+- review only the Checkpoint 2 changes for MUST FIX and SHOULD FIX issues
+- do not make unrelated refactors or expand into history, CSV import or frontend work
+
+At the end, tell me:
+- exactly what you changed
+- test results
+- any MUST FIX findings
+- any SHOULD FIX findings
+- anything you intentionally left unchanged and why
+
+---
+
+Also review all existing @NotBlank / @NotNull validation.
+
+The exercise requirements do not state that every field must be mandatory. Do not make fields mandatory based only on the database model, CSV structure, or assumptions.
+
+Keep @NotBlank / @NotNull only where the exercise requirements clearly require a value or where 
+
+Make these user-provided fields mandatory:
+
+- frameId: @NotBlank and @Size(max = 64)
+- mediaType: @NotBlank
+- format: @NotBlank
+- status: @NotBlank
+- town: @NotBlank
+- region: @NotBlank
+- siteNumber: @NotBlank
+- postcode: @NotBlank
+
+modifiedDate is displayed in the list but is system-managed, so do not require it from the client.
+
+For all other detail fields:
+- do not make them mandatory unless explicitly required by the exercise requirements
+
+After making the changes, run the full backend tests and update the tests to reflect the actual requirements rather than the previous assumptions.
