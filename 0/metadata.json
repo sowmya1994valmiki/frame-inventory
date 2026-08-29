@@ -1,0 +1,80 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M17ERZQ9Q78C1B0VZX0FD83D",
+  "session_id": "01a04e8e-3123-7002-b15a-47259a5c940c",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-29T19:08:39.014936Z",
+  "branch": "master",
+  "checkpoints_count": 8,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/backend/.gitignore",
+    "src/backend/build.gradle",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CommercialDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FieldChange.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/Frame.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistory.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistoryRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistoryEventType.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistorySource.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/IntegrationDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/LocationDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/SiteDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/TechnicalDetails.java",
+    "src/backend/src/main/resources/application-docker.yml",
+    "src/backend/src/main/resources/application.yml",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameHistoryRepositoryPersistenceTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameRepositoryPersistenceTest.java",
+    "src/backend/src/test/resources/application.yml"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "147ca3a85f4f",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 225982,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4177608,
+    "output_tokens": 55600,
+    "api_call_count": 47
+  },
+  "session_metrics": {
+    "turn_count": 8
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-29T19:08:38.9126747Z",
+    "agent_lines": 931,
+    "agent_removed": 0,
+    "human_added": 3,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 935,
+    "total_lines_changed": 935,
+    "agent_percentage": 99.57219251336899,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 932,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 932,
+      "agent_lines_removed": 0
+    }
+  ]
+}

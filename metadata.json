@@ -1,0 +1,44 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M17ERZQ9Q78C1B0VZX0FD83D",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 8,
+  "files_touched": [
+    "src/backend/.gitignore",
+    "src/backend/build.gradle",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CommercialDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FieldChange.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/Frame.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistory.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistoryRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistoryEventType.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistorySource.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/IntegrationDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/LocationDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/SiteDetails.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/frame/TechnicalDetails.java",
+    "src/backend/src/main/resources/application-docker.yml",
+    "src/backend/src/main/resources/application.yml",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameHistoryRepositoryPersistenceTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameRepositoryPersistenceTest.java",
+    "src/backend/src/test/resources/application.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 225982,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4177608,
+    "output_tokens": 55600,
+    "api_call_count": 47
+  }
+}

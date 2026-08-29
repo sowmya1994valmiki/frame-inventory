@@ -1,0 +1,351 @@
+entire status
+
+---
+
+CHECKPOINT 1 — REQUIREMENTS, DOMAIN MODEL & IMPLEMENTATION PLAN
+
+I’ve reviewed the exercise instructions, the starter project, the sample inventory CSV and the provided design-system files.
+
+Before I start implementing, I want to make sure the solution fits the existing project rather than adding unnecessary complexity.
+
+Please inspect the repository carefully, especially:
+
+- INSTRUCTIONS.md and README.md
+- the existing Spring Boot backend
+- the existing React frontend
+- docker-compose.yml
+- data/inventory_frame.csv
+- the supplied design-system files
+
+For this checkpoint, focus on understanding the requirements and proposing the implementation approach.
+
+Please:
+
+1. Summarise the functional requirements in your own words.
+2. Inspect the CSV and identify the data we need to model.
+3. Explain the current backend, frontend and Docker structure and what is already provided.
+4. Propose a simple domain model and persistence approach for the frame inventory.
+5. Identify the APIs we will likely need for:
+   - adding a frame
+   - editing a frame
+   - searching and viewing frames
+   - viewing frame history
+   - importing the supplied CSV through the application
+6. Suggest how the React UI should fit the supplied design system.
+7. Call out any ambiguous requirements or decisions I should make before implementation.
+8. Propose a small checkpoint plan for implementing the exercise incrementally.
+
+
+Please keep the design appropriate for a take-home exercise. Prefer the simplest solution that fully satisfies the requirements and is easy to explain, test and maintain.
+
+Use the existing stack and dependencies wherever possible. Before introducing a new library, service, infrastructure component, abstraction or design pattern, first check whether the requirement can be solved cleanly with what is already available.
+
+Avoid speculative features and abstractions for hypothetical future requirements. Don't build for scale, extensibility or flexibility unless the exercise actually requires it.
+
+Prefer:
+- straightforward Spring Boot controllers, services and repositories
+- a clear domain model without unnecessary layers
+- simple database queries before introducing dedicated search infrastructure
+- standard React patterns and existing dependencies
+- focused validation and error handling for realistic cases
+- small, testable components with clear responsibilities
+
+If there are multiple valid approaches, recommend the simplest one that meets the requirements and briefly explain why it is sufficient.
+
+If you think additional complexity is genuinely necessary, call it out before implementing it and explain what concrete requirement justifies it.
+
+Do not add functionality simply because it might be useful in a production system. Keep the implementation focused on what this exercise asks us to demonstrate.
+
+Avoid adding infrastructure, libraries or architectural patterns unless there is a clear requirement for them.
+
+Do not modify any files yet.
+
+First give me your proposed approach. I will review the decisions before we start implementation.
+
+---
+
+CHECKPOINT 1 — DESIGN DECISIONS
+
+The overall approach looks good. Before implementation, I want to confirm a few decisions.
+
+1. Frame ID
+
+Keep frame_id required and unique. Once created, it should not be editable. Keep it read-only in the edit UI and don't allow the update API to change it.
+
+Also check whether frame_id itself can be the database primary key. Use a separate generated ID only if there is a clear benefit.
+
+2. CSV duplicates
+
+I prefer create-only import unless the requirements say otherwise. New frame IDs should be created; existing frame IDs should be reported as duplicates rather than updated.
+
+3. CSV failures
+
+I prefer row-level processing where possible. Valid rows can be imported and failed rows should be reported with the row number and reason.
+
+If atomic whole-file import is more appropriate based on the requirements, explain why.
+
+4. Frame history
+
+Keep one frame_history table rather than separate history_events and history_changes tables.
+
+Each history record should contain the frame reference, event type, timestamp/source and changed fields as JSON with old and new values.
+
+For updates, store only the fields that actually changed.
+
+For example:
+
+{
+  "status": {
+    "old": "INACTIVE",
+    "new": "LIVE"
+  }
+}
+
+For CREATED or IMPORTED events, the history record can contain minimal or empty change details.
+
+Keep this simple and avoid a generic audit/event-sourcing framework.
+
+5. Java model grouping
+
+The CSV has around 45 columns, so I don't want one large flat Frame class.
+
+Group related fields using @Embeddable / @Embedded where it improves readability, while keeping all those columns in the same frames table.
+
+Consider groups such as:
+- location
+- technical/display
+- commercial/pricing
+- external integration details
+
+Keep important/common fields directly on Frame.
+
+The purpose is Java code readability, not database normalization. Don't create extra tables just for these groups.
+
+Show me the proposed Frame fields and embedded groups before implementation.
+
+6. Search
+
+Use MariaDB/JPA for search. Don't introduce OpenSearch unless there is a clear requirement that justifies the additional complexity.
+
+7. General approach
+
+Keep the solution simple and focused on the exercise. Avoid unnecessary libraries, infrastructure, abstractions and design patterns.
+
+Please respond with:
+- the revised decisions
+- proposed Frame and @Embeddable structure
+- final CSV behaviour
+- final history structure
+- any remaining decisions that genuinely need my input
+
+Do not modify any files yet.
+
+---
+
+CHECKPOINT 1 — FINALISE THE IMPLEMENTATION PLAN
+
+Thanks. I’m happy with the revised design decisions.
+
+Treat the following as agreed decisions going forward:
+
+- frame_id is the String primary key and is immutable after creation
+- CSV import is create-only
+- CSV rows are processed independently and failures are reported per row
+- MariaDB is the only application datastore
+- search uses MariaDB/JPA
+- frame history uses a single frame_history table with JSON changed fields
+- related Frame fields are grouped using @Embeddable / @Embedded while remaining in one frames table
+- no OpenSearch, MongoDB, event sourcing, background jobs or generic auditing framework
+- keep the solution simple and avoid unnecessary abstractions
+
+Before modifying files, please turn the agreed design into a concrete implementation plan based on the existing repository.
+
+Please:
+
+1. Propose the backend package/file structure you intend to create or modify.
+
+2. Show the final Frame entity structure, including:
+   - fields directly on Frame
+   - LocationDetails
+   - SiteDetails
+   - TechnicalDetails
+   - CommercialDetails
+   - IntegrationDetails
+
+3. Make sure all meaningful CSV columns are accounted for. Call out any CSV field that is intentionally not mapped and explain why.
+
+4. Propose the request/response DTOs. Do not expose JPA entities directly through the API.
+
+5. Keep frame_id available during create/import but exclude it from editable update fields.
+
+6. Propose the repository/service responsibilities and keep the layers small. Avoid interfaces or abstractions unless they provide a clear benefit.
+
+7. Define the REST API shape for:
+   - frame search/list
+   - frame details
+   - create frame
+   - update frame
+   - frame history
+   - CSV import
+
+8. Define the validation and error-handling approach for realistic cases such as:
+   - missing required fields
+   - duplicate frame ID
+   - frame not found
+   - invalid field values
+   - malformed CSV
+   - row-level CSV failures
+
+9. Define how history will be recorded for:
+   - manual creation
+   - CSV import
+   - manual update
+
+For updates, record only fields whose values actually changed.
+
+10. Propose focused backend tests for the important behaviour. Prioritise business behaviour and edge cases rather than testing trivial framework code.
+
+11. Explain any dependency changes you intend to make to build.gradle and why each dependency is necessary.
+
+12. Review docker-compose.yml and identify what should change now that MariaDB is the chosen datastore and MongoDB/OpenSearch are not being used.
+
+13. Propose the frontend implementation approach based on the supplied design system and Direction A.
+
+Please identify:
+- the main screens/components needed for frame inventory
+- searchable frame list/table
+- frame details
+- add frame
+- edit frame, with frame_id read-only
+- frame history
+- CSV upload and import result/error display
+- loading, empty and error states
+- how the supplied design-system tokens/styles/icons will be reused
+- a small frontend API layer for communicating with the Spring Boot endpoints
+
+Keep the React implementation simple and use the existing React/Vite/TypeScript setup and dependencies where possible.
+
+Do not introduce a router, state-management library, UI framework or other frontend dependency unless there is a clear requirement for it.
+
+IMPORTANT: Do not implement or modify any frontend code at this stage. Frontend is included here only so that we have an agreed end-to-end design and can make sure the backend APIs support the later UI requirements. Frontend implementation will be handled in separate checkpoints after the backend foundation is ready.
+
+Keep the overall implementation appropriate for a take-home exercise.
+
+Prefer straightforward Spring Boot and React code over generic frameworks or premature abstractions. Do not add functionality that is not required by the exercise.
+
+Do not modify any files yet.
+
+Give me the concrete backend and frontend implementation plan first.
+
+I will review the plan, then we can start implementation in small checkpoints.
+
+---
+
+Can i use same controller for csv import but a different service, what do you think
+
+---
+
+CHECKPOINT 2 — BACKEND PERSISTENCE FOUNDATION
+
+The implementation plan is approved with one small change:
+
+Use FrameController for the CSV import endpoint as well. Do not create a separate CsvImportController.
+
+Keep CSV processing in a separate CsvImportService so the responsibilities remain separated.
+
+For this checkpoint, implement only the backend persistence foundation.
+
+Please implement:
+
+1. Required build.gradle dependencies for:
+   - Spring Data JPA
+   - Spring Validation
+   - MariaDB
+   - H2 for tests
+   - Commons CSV if needed for the later import work
+
+2. MariaDB datasource and JPA configuration.
+
+3. Frame entity with frame_id as the String primary key and immutable after creation.
+
+4. The agreed @Embeddable groups:
+   - LocationDetails
+   - SiteDetails
+   - TechnicalDetails
+   - CommercialDetails
+   - IntegrationDetails
+
+5. Map all 45 CSV fields to the Frame model as agreed.
+
+6. FrameHistory using the agreed single frame_history table with JSON changed fields.
+
+7. Required enums/value types for history.
+
+8. FrameRepository and FrameHistoryRepository.
+
+9. Focused persistence tests to verify:
+   - Frame can be persisted and loaded
+   - embedded fields are persisted correctly
+   - frame_id is used as the identifier
+   - history with JSON changes can be persisted and retrieved
+
+Do not implement yet:
+- REST frame APIs
+- CSV parsing/import logic
+- search logic
+- create/update business logic
+- frontend code
+
+Do not modify any frontend files.
+
+Keep this checkpoint focused on getting the persistence model and database foundation correct.
+
+After implementation:
+- run the backend tests
+- review the changes for unnecessary complexity
+- report the files changed
+- report the test results
+- call out any issue or design change you think I should review
+
+Do not continue into the next checkpoint automatically.
+
+---
+
+CHECKPOINT 1 — FINAL REVIEW BEFORE COMMIT
+
+got it H2 is for test, i agree too.
+
+Before I commit this checkpoint, review only the changes made in this checkpoint.
+
+Please check for:
+- correctness of the JPA mappings
+- all 45 CSV columns are mapped correctly
+- @Embedded groupings are sensible
+- frame_id is correctly used as the immutable primary key
+- frame_history JSON mapping is appropriate
+- MariaDB and H2 configuration are consistent
+- unnecessary dependencies or complexity
+- anything likely to fail when running against actual MariaDB
+
+Do not add new features or refactor working code unless there is a clear issue.
+
+Do not modify frontend files.
+
+First report findings as:
+- MUST FIX
+- SHOULD FIX
+- OPTIONAL
+
+Do not make any changes yet.
+
+---
+
+Apply only these two changes before I commit:
+
+1. Fix the @DataJpaTest configuration so repository tests use the configured H2 MODE=MariaDB datasource.
+2. In FrameHistory, make only the frame_id relationship immutable using updatable = false.
+
+Leave event_type, source and changed_fields unchanged.
+Do not make any other changes.
+
+Rerun all backend tests and report the results.
