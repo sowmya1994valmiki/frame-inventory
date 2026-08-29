@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FrameHistoryRepository extends JpaRepository<FrameHistory, Long> {
 
-    List<FrameHistory> findByFrameFrameIdOrderByOccurredAtDesc(String frameId);
+    List<FrameHistory> findByFrameFrameIdOrderByOccurredAtDescIdDesc(String frameId);
 }

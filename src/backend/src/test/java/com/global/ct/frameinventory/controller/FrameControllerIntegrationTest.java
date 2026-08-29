@@ -1,8 +1,10 @@
 package com.global.ct.frameinventory.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -10,8 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.global.ct.frameinventory.repository.FrameHistoryRepository;
 import com.global.ct.frameinventory.repository.FrameRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,8 +42,12 @@ class FrameControllerIntegrationTest {
     @Autowired
     private FrameRepository repository;
 
+    @Autowired
+    private FrameHistoryRepository historyRepository;
+
     @BeforeEach
     void clearFrames() {
+        historyRepository.deleteAll();
         repository.deleteAll();
     }
 
@@ -216,6 +226,152 @@ class FrameControllerIntegrationTest {
     }
 
     @Test
+    void createsManualCreatedHistoryWithNoChangedFields() throws Exception {
+        create(createRequest(
+            "history-create", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Station", "Address"
+        ));
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-create"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].eventType").value("CREATED"))
+            .andExpect(jsonPath("$[0].source").value("MANUAL"))
+            .andExpect(jsonPath("$[0].occurredAt", endsWith("Z")))
+            .andExpect(jsonPath("$[0].changedFields", aMapWithSize(0)));
+    }
+
+    @Test
+    void recordsOnlyChangedNestedFieldsAndReturnsMultipleUpdatesNewestFirst() throws Exception {
+        String createRequest = createRequest(
+            "history-update", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Station", "Address"
+        );
+        create(createRequest);
+
+        ObjectNode firstUpdate = updateRequest(createRequest);
+        ((ObjectNode) firstUpdate.get("location")).put("postcode", "M1 1AA");
+        mockMvc.perform(put("/api/frames/{frameId}", "history-update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(firstUpdate.toString()))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-update"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].eventType").value("UPDATED"))
+            .andExpect(jsonPath("$[0].changedFields", aMapWithSize(1)))
+            .andExpect(jsonPath("$[0].changedFields['location.postcode'].old").value("W1J 9DZ"))
+            .andExpect(jsonPath("$[0].changedFields['location.postcode'].new").value("M1 1AA"))
+            .andExpect(jsonPath("$[1].eventType").value("CREATED"));
+
+        ObjectNode secondUpdate = firstUpdate.deepCopy();
+        secondUpdate.put("status", "INACTIVE");
+        ((ObjectNode) secondUpdate.get("site")).put("siteNumber", "SITE-2");
+        ((ObjectNode) secondUpdate.get("technical")).put("pixelWidth", 2560);
+        ((ObjectNode) secondUpdate.get("technical")).putNull("pixelHeight");
+        mockMvc.perform(put("/api/frames/{frameId}", "history-update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(secondUpdate.toString()))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-update"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)))
+            .andExpect(jsonPath("$[0].eventType").value("UPDATED"))
+            .andExpect(jsonPath("$[0].source").value("MANUAL"))
+            .andExpect(jsonPath("$[0].changedFields", aMapWithSize(4)))
+            .andExpect(jsonPath("$[0].changedFields.status.old").value("LIVE"))
+            .andExpect(jsonPath("$[0].changedFields.status.new").value("INACTIVE"))
+            .andExpect(jsonPath("$[0].changedFields['site.siteNumber'].old").value("SITE-1"))
+            .andExpect(jsonPath("$[0].changedFields['site.siteNumber'].new").value("SITE-2"))
+            .andExpect(jsonPath("$[0].changedFields['technical.pixelWidth'].old").value("1920"))
+            .andExpect(jsonPath("$[0].changedFields['technical.pixelWidth'].new").value("2560"))
+            .andExpect(jsonPath("$[0].changedFields['technical.pixelHeight'].old").value("1200"))
+            .andExpect(jsonPath("$[0].changedFields['technical.pixelHeight'].new").value(nullValue()))
+            .andExpect(jsonPath("$[1].changedFields['location.postcode'].new").value("M1 1AA"))
+            .andExpect(jsonPath("$[2].eventType").value("CREATED"));
+    }
+
+    @Test
+    void noOpUpdateTreatsScaledDecimalsAsEqualAndPreservesModifiedDate() throws Exception {
+        String request = createRequest(
+            "history-no-op", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Station", "Address"
+        );
+        MvcResult created = create(request);
+        String modifiedDate = objectMapper.readTree(created.getResponse().getContentAsString())
+            .get("modifiedDate")
+            .asText();
+        ObjectNode noOpUpdate = updateRequest(request);
+        ((ObjectNode) noOpUpdate.get("location")).put("longitude", new BigDecimal("-0.141745050"));
+        ((ObjectNode) noOpUpdate.get("location")).put("latitude", new BigDecimal("51.506049910"));
+        ((ObjectNode) noOpUpdate.get("commercial")).put("impactWeight", new BigDecimal("0.602700"));
+
+        mockMvc.perform(put("/api/frames/{frameId}", "history-no-op")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(noOpUpdate.toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.modifiedDate").value(modifiedDate));
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-no-op"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].eventType").value("CREATED"));
+    }
+
+    @Test
+    void roundsExtraPrecisionBeforeComparingAndRecordingDecimalChanges() throws Exception {
+        String request = createRequest(
+            "history-rounded-decimal", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Station", "Address"
+        );
+        MvcResult created = create(request);
+        String originalModifiedDate = objectMapper.readTree(created.getResponse().getContentAsString())
+            .get("modifiedDate")
+            .asText();
+
+        ObjectNode roundedNoOp = updateRequest(request);
+        ((ObjectNode) roundedNoOp.get("commercial"))
+            .put("impactWeight", new BigDecimal("0.60271"));
+        mockMvc.perform(put("/api/frames/{frameId}", "history-rounded-decimal")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(roundedNoOp.toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.modifiedDate").value(originalModifiedDate))
+            .andExpect(jsonPath("$.commercial.impactWeight").value(0.6027));
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-rounded-decimal"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        ObjectNode roundedChange = updateRequest(request);
+        ((ObjectNode) roundedChange.get("commercial"))
+            .put("impactWeight", new BigDecimal("0.60276"));
+        mockMvc.perform(put("/api/frames/{frameId}", "history-rounded-decimal")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(roundedChange.toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.commercial.impactWeight").value(0.6028));
+
+        mockMvc.perform(get("/api/frames/{frameId}/history", "history-rounded-decimal"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].eventType").value("UPDATED"))
+            .andExpect(jsonPath("$[0].changedFields", aMapWithSize(1)))
+            .andExpect(jsonPath("$[0].changedFields['commercial.impactWeight'].old").value("0.6027"))
+            .andExpect(jsonPath("$[0].changedFields['commercial.impactWeight'].new").value("0.6028"));
+    }
+
+    @Test
+    void returnsNotFoundForMissingFrameHistory() throws Exception {
+        mockMvc.perform(get("/api/frames/{frameId}/history", "missing"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.title").value("Frame not found"))
+            .andExpect(jsonPath("$.detail").value("Frame 'missing' was not found"));
+    }
+
+    @Test
     void updateRejectsFrameIdInRequestBody() throws Exception {
         create(createRequest(
             "immutable", "LIVE", "DIGITAL", "UNDERGROUND", "D6", "London", "Station", "Address"
@@ -333,6 +489,12 @@ class FrameControllerIntegrationTest {
                 .content(request))
             .andExpect(status().isCreated())
             .andReturn();
+    }
+
+    private ObjectNode updateRequest(String createRequest) throws Exception {
+        ObjectNode request = (ObjectNode) objectMapper.readTree(createRequest);
+        request.remove("frameId");
+        return request;
     }
 
     private String createRequest(

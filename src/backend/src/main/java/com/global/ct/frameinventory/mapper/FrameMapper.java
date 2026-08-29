@@ -1,5 +1,7 @@
 package com.global.ct.frameinventory.mapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -24,6 +26,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FrameMapper {
+
+    private static final int COORDINATE_SCALE = 8;
+    private static final int IMPACT_WEIGHT_SCALE = 4;
 
     public Frame toNewEntity(CreateFrameRequest request, LocalDateTime now) {
         return new Frame(
@@ -76,7 +81,9 @@ public class FrameMapper {
         return new LocationDetails(
             dto.postcode(), dto.postcodeArea(), dto.postcodeDistrict(), dto.postcodeSector(),
             dto.postcodeUnit(), dto.address(), dto.region(), dto.countryCode(), dto.town(),
-            dto.longitude(), dto.latitude(), dto.distanceToClosestSchool(),
+            atScale(dto.longitude(), COORDINATE_SCALE),
+            atScale(dto.latitude(), COORDINATE_SCALE),
+            dto.distanceToClosestSchool(),
             dto.rawLocationPoint(), dto.locationId()
         );
     }
@@ -105,7 +112,8 @@ public class FrameMapper {
             return null;
         }
         return new CommercialDetails(
-            dto.impactWeight(), dto.productionRateCard(), dto.legacyProductionRateCard(),
+            atScale(dto.impactWeight(), IMPACT_WEIGHT_SCALE),
+            dto.productionRateCard(), dto.legacyProductionRateCard(),
             dto.pricingGrade(), dto.priceEntityId(), dto.premium()
         );
     }
@@ -177,5 +185,9 @@ public class FrameMapper {
 
     private Instant toInstant(LocalDateTime value) {
         return value.toInstant(ZoneOffset.UTC);
+    }
+
+    private BigDecimal atScale(BigDecimal value, int scale) {
+        return value == null ? null : value.setScale(scale, RoundingMode.HALF_UP);
     }
 }

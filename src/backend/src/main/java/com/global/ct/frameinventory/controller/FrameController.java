@@ -1,10 +1,12 @@
 package com.global.ct.frameinventory.controller;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import com.global.ct.frameinventory.dto.CreateFrameRequest;
+import com.global.ct.frameinventory.dto.FrameHistoryResponse;
 import com.global.ct.frameinventory.dto.FramePageResponse;
 import com.global.ct.frameinventory.dto.FrameResponse;
 import com.global.ct.frameinventory.dto.FrameSearchCriteria;
@@ -57,6 +59,11 @@ public class FrameController {
     @GetMapping("/{frameId}")
     public FrameResponse get(@PathVariable String frameId) {
         return service.getFrame(frameId);
+    }
+
+    @GetMapping("/{frameId}/history")
+    public List<FrameHistoryResponse> getHistory(@PathVariable String frameId) {
+        return service.getFrameHistory(frameId);
     }
 
     @PutMapping("/{frameId}")

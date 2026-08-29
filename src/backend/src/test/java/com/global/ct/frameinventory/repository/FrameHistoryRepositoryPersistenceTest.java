@@ -54,7 +54,7 @@ class FrameHistoryRepositoryPersistenceTest {
         entityManager.clear();
 
         List<FrameHistory> history = frameHistoryRepository
-            .findByFrameFrameIdOrderByOccurredAtDesc("1234604983");
+            .findByFrameFrameIdOrderByOccurredAtDescIdDesc("1234604983");
 
         assertThat(history).hasSize(1);
         FrameHistory loaded = history.getFirst();
