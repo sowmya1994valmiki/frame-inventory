@@ -1,4 +1,4 @@
-package com.global.ct.frameinventory.frame;
+package com.global.ct.frameinventory.entity;
 
 import java.math.BigDecimal;
 

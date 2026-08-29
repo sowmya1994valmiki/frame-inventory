@@ -1,4 +1,4 @@
-package com.global.ct.frameinventory;
+package com.global.ct.frameinventory.controller;
 
 import java.time.Instant;
 import java.util.Map;

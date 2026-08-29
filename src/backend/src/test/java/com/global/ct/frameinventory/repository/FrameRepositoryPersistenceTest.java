@@ -1,9 +1,16 @@
-package com.global.ct.frameinventory.frame;
+package com.global.ct.frameinventory.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.global.ct.frameinventory.entity.CommercialDetails;
+import com.global.ct.frameinventory.entity.Frame;
+import com.global.ct.frameinventory.entity.IntegrationDetails;
+import com.global.ct.frameinventory.entity.LocationDetails;
+import com.global.ct.frameinventory.entity.SiteDetails;
+import com.global.ct.frameinventory.entity.TechnicalDetails;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

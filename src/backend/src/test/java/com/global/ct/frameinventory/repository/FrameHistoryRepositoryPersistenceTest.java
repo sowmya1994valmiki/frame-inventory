@@ -1,4 +1,4 @@
-package com.global.ct.frameinventory.frame;
+package com.global.ct.frameinventory.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,6 +6,12 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.global.ct.frameinventory.entity.FieldChange;
+import com.global.ct.frameinventory.entity.Frame;
+import com.global.ct.frameinventory.entity.FrameHistory;
+import com.global.ct.frameinventory.entity.HistoryEventType;
+import com.global.ct.frameinventory.entity.HistorySource;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

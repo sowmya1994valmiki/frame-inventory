@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: frame-inventory-backend
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
   datasource:
     url: ${DB_URL:jdbc:mariadb://localhost:3306/frames}
     username: ${DB_USERNAME:app}

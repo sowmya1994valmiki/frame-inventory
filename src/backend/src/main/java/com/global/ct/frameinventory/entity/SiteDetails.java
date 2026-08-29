@@ -1,4 +1,4 @@
-package com.global.ct.frameinventory.frame;
+package com.global.ct.frameinventory.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

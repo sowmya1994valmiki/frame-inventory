@@ -1,4 +1,4 @@
-package com.global.ct.frameinventory.frame;
+package com.global.ct.frameinventory.entity;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +22,7 @@ public class Frame {
     @Column(nullable = false, length = 64)
     private String format;
 
-    @Column(nullable = false, length = 32)
+    @Column(length = 32)
     private String environment;
 
     @Column(nullable = false, length = 32)
