@@ -1,0 +1,43 @@
+I just checked the actual backend source structure and noticed it does not fully match the package/folder structure we previously agreed on.
+
+Please inspect the CURRENT backend files first and reorganize the existing code into this package structure where appropriate:
+
+com.global.ct.frameinventory
+├── Application.java
+├── controller
+├── dto
+├── entity
+├── repository
+├── service
+├── mapper
+├── exception
+├── config
+└── specification
+
+Rules:
+- Controllers -> controller
+- Request/response/nested API DTOs -> dto
+- JPA entities, embeddables and persistence-related enums/value types -> entity
+- Spring Data repositories -> repository
+- Business logic -> service
+- Entity/DTO mapping -> mapper
+- Custom exceptions and global exception handling -> exception
+- Spring configuration -> config
+- JPA search specifications -> specification
+
+Important:
+- Inspect the current implementation and move only existing classes that are in the wrong package.
+- Do not create duplicate/replacement classes just to match the structure.
+- Update package declarations and imports after moving files.
+- Do not change API behaviour, validation rules, persistence mappings, search logic or business logic.
+- Do not add CSV/history/frontend functionality as part of this refactor.
+- Keep the existing single FrameController decision.
+- Do not create a separate FrameImportController.
+- Do not introduce unnecessary packages or abstractions.
+
+After reorganizing:
+1. Show me the final backend package tree.
+2. Run the full backend test suite.
+3. Fix only compilation/import issues caused by the moves.
+4. Review the refactor for MUST FIX issues.
+5. Tell me exactly which files were moved and confirm whether any application logic changed.

@@ -1,9 +1,12 @@
 {
   "cli_version": "0.10.2",
   "checkpoint_id": "01M17RMNTVMBHPCAA9QNGC8W4V",
+  "session_id": "01a04fa6-b868-73c1-b194-ce469f3d938d",
   "strategy": "manual-commit",
+  "created_at": "2026-08-29T22:40:27.4332899Z",
   "branch": "master",
-  "checkpoints_count": 9,
+  "checkpoints_count": 1,
+  "save_step_count": 1,
   "files_touched": [
     "src/backend/src/main/java/com/global/ct/frameinventory/HealthController.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/config/FrameTimeConfiguration.java",
@@ -35,76 +38,63 @@
     "src/backend/src/main/java/com/global/ct/frameinventory/exception/FrameNotFoundException.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/exception/InvalidFrameRequestException.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/CommercialDetails.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CommercialDto.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/CreateFrameRequest.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/DuplicateFrameException.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/FieldChange.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/Frame.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameApiExceptionHandler.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameController.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistory.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameHistoryRepository.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameMapper.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameNotFoundException.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FramePageResponse.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameRepository.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameResponse.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSearchCriteria.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameService.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSpecifications.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameSummaryResponse.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/FrameTimeConfiguration.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistoryEventType.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/HistorySource.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/IntegrationDetails.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/IntegrationDto.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/InvalidFrameRequestException.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/LocationDetails.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/LocationDto.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/SiteDetails.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/SiteDto.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/frame/TechnicalDetails.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/TechnicalDto.java",
-    "src/backend/src/main/java/com/global/ct/frameinventory/frame/UpdateFrameRequest.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/mapper/FrameMapper.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/repository/FrameHistoryRepository.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/repository/FrameRepository.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
     "src/backend/src/main/java/com/global/ct/frameinventory/specification/FrameSpecifications.java",
-    "src/backend/src/main/resources/application.yml",
     "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameControllerIntegrationTest.java",
     "src/backend/src/test/java/com/global/ct/frameinventory/dto/FrameRequestValidationTest.java",
-    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameControllerIntegrationTest.java",
     "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameHistoryRepositoryPersistenceTest.java",
     "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameRepositoryPersistenceTest.java",
-    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameRequestValidationTest.java",
-    "src/backend/src/test/java/com/global/ct/frameinventory/frame/FrameServiceTest.java",
     "src/backend/src/test/java/com/global/ct/frameinventory/repository/FrameHistoryRepositoryPersistenceTest.java",
     "src/backend/src/test/java/com/global/ct/frameinventory/repository/FrameRepositoryPersistenceTest.java",
-    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java",
-    "src/backend/src/test/resources/application.yml"
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java"
   ],
-  "sessions": [
-    {
-      "metadata": "/0/metadata.json",
-      "transcript": "/0/full.jsonl",
-      "compact_transcript": "/0/transcript.jsonl",
-      "content_hash": "/0/content_hash.txt",
-      "prompt": "/0/prompt.txt"
-    },
-    {
-      "metadata": "/1/metadata.json",
-      "transcript": "/1/full.jsonl",
-      "compact_transcript": "/1/transcript.jsonl",
-      "content_hash": "/1/content_hash.txt",
-      "prompt": "/1/prompt.txt"
-    }
-  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "b78149f625f5",
+  "compact_transcript_start": 0,
   "token_usage": {
-    "input_tokens": 183457,
+    "input_tokens": 62392,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 3287068,
-    "output_tokens": 60582,
-    "api_call_count": 62
-  }
+    "cache_read_tokens": 683792,
+    "output_tokens": 12258,
+    "api_call_count": 16
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-29T22:40:27.3816656Z",
+    "agent_lines": 2319,
+    "agent_removed": 917,
+    "human_added": 6,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 2325,
+    "total_lines_changed": 3242,
+    "agent_percentage": 99.8149290561382,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
 }
