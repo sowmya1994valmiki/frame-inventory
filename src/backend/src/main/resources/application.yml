@@ -4,6 +4,19 @@ server:
 spring:
   application:
     name: frame-inventory-backend
+  datasource:
+    url: ${DB_URL:jdbc:mariadb://localhost:3306/frames}
+    username: ${DB_USERNAME:app}
+    password: ${DB_PASSWORD:app}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
 
 management:
   endpoints:
