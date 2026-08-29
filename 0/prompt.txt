@@ -1,0 +1,145 @@
+Checkpoint 3 — Frame History Behaviour
+
+Use the existing history persistence model already implemented in this project from Checkpoint 1.
+
+Stick to the current design:
+- one frame_history table
+- FrameHistory references Frame by frame_id
+- HistoryEventType: CREATED, IMPORTED, UPDATED
+- HistorySource: MANUAL, CSV_UPLOAD
+- occurredAt timestamp
+- changedFields stored as JSON with old/new values
+- append-style history
+- no generic audit framework
+- no event sourcing
+
+Implement only:
+
+1. Manual create
+- create a CREATED history record
+- source = MANUAL
+- changedFields = {}
+- UTC timestamp
+
+2. Manual update
+- create an UPDATED history record only when business fields actually changed
+- capture only changed fields
+- use old/new values
+- use nested paths such as location.postcode, site.siteNumber, technical.pixelWidth
+- source = MANUAL
+- do not treat modifiedDate alone as a business change
+
+3. No-op update
+- do not create an UPDATED history record if no business value changed
+- preserve existing PUT behaviour
+
+4. History API
+Add:
+GET /api/frames/{frameId}/history
+
+- keep it in the existing FrameController
+- return newest-first
+- use FrameHistoryResponse DTO
+- return existing 404 behaviour for missing frame
+
+5. Tests
+Cover:
+- CREATED history
+- UPDATED history
+- changed fields only
+- nested field change
+- multiple fields changed in one update
+- no-op update
+- newest-first retrieval
+- missing frame
+
+Keep the frame update and history insert in the same transaction.
+
+Keep the implementation simple and appropriate for this take-home exercise:
+- reuse the existing FrameHistory entity and FrameHistoryRepository
+- prefer straightforward and readable change detection
+- keep the history logic close to the existing FrameService unless a separate service is clearly justified
+- avoid reflection-based or generic diff frameworks
+- avoid unnecessary abstractions, interfaces, factories, strategies or additional layers
+- do not introduce new dependencies unless genuinely required
+- prioritize code that is easy to understand, test and explain in an interview
+
+Do not implement CSV import or frontend work.
+Do not redesign the existing history model.
+Do not make unrelated refactors.
+
+First inspect the current code and propose the minimal implementation approach.
+Do not change files yet.
+
+---
+
+The approach looks good and I don't reject any of the proposed structure.
+
+Before implementation, clarify one point:
+- For a no-op PUT where no business field changed, should modifiedDate remain unchanged rather than being refreshed? I don't want the frame to appear modified when no actual business value changed.
+Don't change modifiedDate for no-op
+
+Also use BigDecimal.compareTo() for change detection so values like 1.0 and 1.00 are treated as equal.
+
+Don't change anything yet; just clarify the no-op modifiedDate behaviour.
+
+---
+
+Now review only the Checkpoint 3 changes from a senior Java/Spring Boot engineer perspective.
+
+Focus on:
+- correctness of CREATED and UPDATED history behaviour
+- changed-field detection, including nested/null values and BigDecimal comparison
+- no-op update behaviour
+- transaction boundaries and rollback consistency
+- JPA/history persistence correctness
+- GET history API behaviour
+- error handling
+- test coverage and meaningful edge cases
+- readability and maintainability
+
+Classify findings as:
+- MUST FIX — correctness, data consistency, broken requirement, or significant bug
+- SHOULD FIX — worthwhile improvement within this checkpoint
+- OPTIONAL — nice-to-have only
+
+Keep the take-home scope in mind. Do not suggest enterprise patterns, unnecessary abstractions, generic auditing frameworks, or unrelated refactoring.
+
+Do not change any files yet. Give me the review findings first.
+
+---
+
+Please implement the approved Checkpoint 3 plan now.
+
+Include:
+- CREATED/MANUAL history on create with {}
+- UPDATED/MANUAL history only for actual business-field changes, recording only old/new changed fields including nested fields
+- BigDecimal numeric comparison using compareTo()
+- no-op PUT: no save, no modifiedDate change, no history
+- GET /api/frames/{frameId}/history, newest-first with existing 404 behaviour
+- frame change + history in the same transaction
+- focused tests for create/update, nested/multiple changes, BigDecimal equality, no-op and history retrieval
+
+Reuse the existing history model/repository and keep the implementation simple. No CSV, frontend, generic auditing/diff framework or unrelated refactoring.
+
+Run the full backend tests after implementation and report MUST FIX / SHOULD FIX findings.
+
+---
+
+Review only the Checkpoint 3 changes as a senior Java/Spring Boot engineer.
+
+Check correctness, transaction/rollback consistency, CREATED/UPDATED history, nested field diffing, BigDecimal comparison, no-op PUT behaviour, history API, and test coverage.
+
+Classify findings as MUST FIX / SHOULD FIX only. Keep the take-home scope in mind and avoid overengineering or unrelated refactoring. Do not change files yet.
+
+---
+
+Please fix the Checkpoint 3 MUST FIX and SHOULD FIX findings.
+
+1. Make sure decimal values are rounded to the same precision we store in the database before comparing them or writing history. This way, the history shows the actual value saved in the database. Keep the solution simple and explicit.
+
+2. Add a focused test proving that if history persistence fails, the frame create/update transaction rolls back.
+
+Also add a test for a decimal value with extra precision, e.g. 0.60271 being persisted/compared at the configured column scale.
+
+Run the full backend tests afterward and report the changes and any remaining MUST FIX / SHOULD FIX findings.

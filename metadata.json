@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M17XYRZQRC299VYYH37XSXVJ",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/dto/FrameHistoryResponse.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/mapper/FrameMapper.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/repository/FrameHistoryRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameControllerIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/repository/FrameHistoryRepositoryPersistenceTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameHistoryRollbackIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 90226,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2219623,
+    "output_tokens": 35215,
+    "api_call_count": 41
+  }
+}
