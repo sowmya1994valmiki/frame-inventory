@@ -1,0 +1,165 @@
+Checkpoint 6 — React Inventory + Search.
+
+Please review the existing React/Vite/TypeScript frontend and the completed backend frame APIs before making changes.
+
+Build the main inventory screen with:
+
+- inventory table using GET /api/frames
+- backend pagination
+- free-text search using q
+- filters for status, mediaType, environment, format and region
+- loading state
+- API error state
+- empty-results state
+- useful columns from FrameSummaryResponse
+- styling aligned with the supplied design system where practical
+
+Keep this checkpoint limited to inventory/search only.
+
+Do not implement:
+- add frame
+- edit frame
+- history UI
+- CSV import UI
+
+Keep the frontend simple and suitable for a take-home exercise. Avoid unnecessary libraries and over-engineering.
+
+Before changing files, inspect the current frontend structure and backend API contract and propose:
+
+1. component structure
+2. API/client approach
+3. table columns
+4. search/filter behaviour
+5. pagination behaviour
+6. files to add/change
+
+Do not modify files yet. I want to review the approach first.
+
+---
+
+I reviewed the Checkpoint 6 proposal. Please proceed with implementation using these final decisions.
+
+ACCEPT:
+- Keep the proposed component structure: InventoryPage, FrameFilters, FrameTable, Pagination and UI states.
+- Use plain fetch with a small typed API client.
+- Reuse the existing Vite /api proxy.
+- Keep state and fetching in InventoryPage; no state-management library or router.
+- Use backend pagination with page sizes 20, 50 and 100.
+- Use q for debounced free-text search and reset to page 1 when search/filter/page size changes.
+- Support loading, API error and empty-result states.
+- Keep the proposed inventory table columns.
+- Use the supplied design-system styles/tokens where practical.
+- Keep this checkpoint limited to inventory/search/filter/pagination.
+
+CHANGE:
+- Status should be a dropdown because the supported UI values are LIVE and INACTIVE.
+- For the inventory filter use:
+  All
+  LIVE
+  INACTIVE
+- Later, for Add/Edit Frame, status will also be a LIVE/INACTIVE dropdown and LIVE should be the default for a new frame. Do not implement Add/Edit now.
+- Keep mediaType, environment, format and region as simple string-based filter controls using the existing backend query parameters.
+
+REJECT:
+- Do not assume or introduce backend FrameStatus or FrameType enums. The current backend fields are Strings.
+- Do not create CSV-derived pseudo-enums or hard-code dropdown options for mediaType, environment, format or region.
+- Do not add a new backend filter-options/facets API.
+- Do not change the backend model/API for this checkpoint.
+- Do not add @CrossOrigin or other CORS changes; use the existing Vite proxy.
+- Do not copy/add font files unless already required by the starter.
+- Do not add router, state-management libraries or unnecessary dependencies.
+- Do not implement Add/Edit, History or CSV Import UI yet.
+
+Please implement Checkpoint 6 now.
+
+After implementation:
+1. run the frontend tests if present,
+2. run the production build,
+3. report the files changed,
+4. summarize the implemented behaviour,
+5. report any MUST FIX or SHOULD FIX findings.
+
+Keep the implementation simple and production-minded without over-engineering.
+
+---
+
+Show me where GET /api/frames is called and explain how search, filters, page and size become query parameters.
+
+---
+
+Explain exactly how the 300ms search debounce works in our current code, with one example of typing "London".
+
+---
+
+Review only the Checkpoint 6 frontend changes as a senior React/TypeScript engineer.
+
+Focus on:
+- React state/effect correctness
+- API request lifecycle and AbortController handling
+- debounce behaviour
+- stale-response/race conditions
+- search/filter/page reset behaviour
+- pagination edge cases
+- loading/error/empty states
+- TypeScript types
+- accessibility
+- responsive table behaviour
+- unnecessary complexity
+
+Classify findings as MUST FIX or SHOULD FIX only.
+
+Do not change any files.
+
+---
+
+so The bug is that loading=true is being set before we know whether a real API request will actually happen. am i right ?
+
+---
+
+Accept all 6 review findings. Please fix them as follows:
+
+1. MUST FIX — Stuck loading state
+Make loading state controlled by the actual active/latest API request.
+Do not set loading=true from debounce, filter, pagination, or other event handlers when an API request may not actually occur.
+Ensure loading cannot remain stuck when the effective query/filter values do not change.
+
+2. SHOULD FIX — Page correction loading race
+Handle this together with #1.
+If an out-of-range page is corrected and triggers another request, an older request must not set loading=false while the newer request is still running.
+Only the active/latest request should control the final loading state.
+
+3. SHOULD FIX — String filters request on every keystroke
+Apply the same ~300 ms debounce pattern used by q search to the free-text filters:
+- mediaType
+- environment
+- format
+- region
+
+Keep the status dropdown immediate because it is a single selection.
+
+4. SHOULD FIX — Filter callback type safety
+Improve the TypeScript callback typing so each filter key is associated with its correct value type.
+Keep this simple; do not introduce unnecessary abstractions.
+
+5. SHOULD FIX — Pagination accessibility
+Replace the generic pagination container with:
+<nav aria-label="Inventory pagination">
+Keep the existing pagination behaviour unchanged.
+
+6. SHOULD FIX — Scrollable table accessibility
+Keep this fix minimal.
+Add tabIndex and an appropriate aria-label to the existing horizontally scrollable table container.
+Do not create another component or redesign the table.
+
+Keep all changes strictly within Checkpoint 6.
+Do not change backend code.
+Do not add dependencies.
+Do not introduce unrelated refactoring.
+
+After implementation:
+- run lint
+- run production build
+- run git diff --check
+- review only these fixes for regressions
+
+Then report any remaining MUST FIX or SHOULD FIX findings.
