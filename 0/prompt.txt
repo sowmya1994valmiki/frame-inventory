@@ -1,0 +1,56 @@
+Checkpoint 13 Please review FrameService logging.
+
+It currently has no logs. Add only useful service-level logs where they provide operational value, without overlogging.
+
+Focus on:
+- create frame
+- update frame
+- get/search only if logging is genuinely useful
+- unexpected service failures if not already logged elsewhere
+
+Do not log request bodies, sensitive data, or duplicate information already logged by the global exception handler/controller.
+
+Keep the logging concise and appropriate for production.
+
+---
+
+Please review FrameController logging as well.
+
+Add only useful controller-level logs where they provide operational value.
+
+Avoid:
+- logging every request unnecessarily
+- duplicating FrameService or global exception-handler logs
+- logging request bodies or sensitive data
+
+Keep the logging concise and consistent with the existing application logging approach.
+
+---
+
+Please review the frontend testing gap.
+
+There are currently no frontend automated tests. Add a small focused test suite for the highest-risk behaviour only.
+
+Prioritize:
+- InventoryPage filter/request behaviour
+- FrameForm validation and request mapping
+- API request/error handling
+- CSV import result rendering if useful
+
+Use the existing frontend stack and keep the scope small. Do not add broad or low-value tests.
+
+First tell me the minimal test setup and exact tests you recommend. Do not change code yet.
+
+---
+
+Let's keep the frontend tests smaller.
+
+Add the minimal Vitest + Testing Library setup and around 5-6 high-value tests covering:
+- InventoryPage typed filters and search behaviour
+- FrameForm validation/request mapping
+- API query/error handling
+- one CSV partial-import rendering test if useful
+
+Avoid exhaustive tests, snapshots, MSW and coverage tooling.
+
+After implementation, run the frontend tests, lint and build.

@@ -1,0 +1,38 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M1AGSAXZYTMVFCF7YZ27ZEWQ",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameCsvImportIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java",
+    "src/frontend/package-lock.json",
+    "src/frontend/package.json",
+    "src/frontend/src/api/frames.test.ts",
+    "src/frontend/src/components/CsvImportPage.test.tsx",
+    "src/frontend/src/components/FrameForm.test.tsx",
+    "src/frontend/src/components/InventoryPage.test.tsx",
+    "src/frontend/src/components/frameFormModel.test.ts",
+    "src/frontend/src/test/setup.ts",
+    "src/frontend/vite.config.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 95573,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2349452,
+    "output_tokens": 23114,
+    "api_call_count": 46
+  }
+}

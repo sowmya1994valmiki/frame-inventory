@@ -1,0 +1,81 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M1AGSAXZYTMVFCF7YZ27ZEWQ",
+  "session_id": "01a054f8-39a2-77a2-9434-45d0a3054818",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-30T23:41:30.3797497Z",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "save_step_count": 4,
+  "files_touched": [
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameCsvImportIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java",
+    "src/frontend/package-lock.json",
+    "src/frontend/package.json",
+    "src/frontend/src/api/frames.test.ts",
+    "src/frontend/src/components/CsvImportPage.test.tsx",
+    "src/frontend/src/components/FrameForm.test.tsx",
+    "src/frontend/src/components/InventoryPage.test.tsx",
+    "src/frontend/src/components/frameFormModel.test.ts",
+    "src/frontend/src/test/setup.ts",
+    "src/frontend/vite.config.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "229f5858f5ad",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 95573,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2349452,
+    "output_tokens": 23114,
+    "api_call_count": 46
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-30T23:41:30.3155751Z",
+    "agent_lines": 1515,
+    "agent_removed": 9,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 1515,
+    "total_lines_changed": 1524,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 67,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 84,
+      "agent_lines_removed": 5
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 84,
+      "agent_lines_removed": 6
+    }
+  ]
+}
