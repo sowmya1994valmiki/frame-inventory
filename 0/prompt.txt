@@ -1,0 +1,88 @@
+Checkpoint 8 — React Frame History
+
+Please inspect the existing frontend and backend history API and propose the simplest implementation plan for a Frame History view.
+
+Target UI behaviour:
+- From the inventory list, open a frame detail view.
+- Show the selected frame heading and basic status.
+- Provide a History section/tab for that frame.
+- Display history entries in a readable table/list with:
+  - timestamp
+  - event type: CREATED / IMPORTED / UPDATED
+  - source: MANUAL / CSV_UPLOAD
+  - number of changed fields
+- For UPDATED events, allow the entry to expand and show:
+  - readable field name
+  - old value
+  - new value
+- For CREATED or IMPORTED events with no changedFields, show a simple descriptive message instead of an empty table.
+- Format nested names nicely, for example:
+  location.countryCode -> Country code
+  site.siteNumber -> Site number
+- Format timestamps in a user-friendly local date/time.
+- Handle null/blank old or new values clearly, e.g. "—".
+- Include loading, empty-history and API-error states.
+- Provide a clear way back to the inventory list.
+
+Keep it simple:
+- reuse the existing GET /api/frames/{frameId}/history endpoint and current DTO
+- reuse the current frontend layout/design system
+- no new dependencies
+- no backend changes unless the existing API genuinely blocks the UI
+- keep the current local navigation approach; do not introduce React Router
+- no delete functionality or unrelated features
+
+Do not change code yet.
+
+First report:
+1. current history API/DTO shape,
+2. files you would add/change,
+3. proposed UI structure,
+4. how expanded old/new changes will work,
+5. any decisions or risks I should approve before implementation.
+
+---
+
+Decisions:
+
+
+REJECT:
+- Do not add visible tab navigation.
+- Do not add inventory filter/page state preservation in this checkpoint.
+
+APPROVE:
+- Use a History section instead of tabs.
+- Keep the existing local React screen-state navigation.
+- Returning to inventory may reset filters/page for now.
+- Keep the existing unpaginated history API.
+- Expansion state may reset when leaving/reloading the page.
+
+
+Proceed with the approved CheckPoint8 implementation plan.
+
+After implementation run:
+- lint
+- production build
+- git diff --check
+
+---
+
+I have done the manual testing, everything is working.Please do a final senior review of CP8 changes only.
+
+Classify findings as:
+- MUST FIX
+- SHOULD FIX
+- OPTIONAL
+
+Focus on simplicity,correctness, React/TypeScript quality, accessibility, API/error handling, race conditions, and regressions.
+
+Do not change code yet.
+Do not suggest new features or unrelated refactoring.
+
+---
+
+Rejecting both review suggestions.
+
+I am happy with the current implementation
+
+No code changes are needed.
