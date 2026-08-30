@@ -1,0 +1,84 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M18163J1ZWYSG44FD8DD7ATQ",
+  "session_id": "01a04fe2-bff5-7940-91a3-0c45cd9bfb89",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-30T00:30:22.6671233Z",
+  "branch": "master",
+  "checkpoints_count": 6,
+  "save_step_count": 5,
+  "files_touched": [
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/dto/FrameCsvImportError.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/dto/FrameCsvImportSummary.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/exception/FrameApiExceptionHandler.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/exception/InvalidCsvFileException.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameCsvImportService.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameCsvImportIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameHistoryRollbackIntegrationTest.java"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "6abf59f85442",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 88193,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2541386,
+    "output_tokens": 30870,
+    "api_call_count": 44
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-30T00:30:22.6047893Z",
+    "agent_lines": 611,
+    "agent_removed": 4,
+    "human_added": 60,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 672,
+    "total_lines_changed": 676,
+    "agent_percentage": 90.97633136094674,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 612,
+      "agent_lines_removed": 4
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 612,
+      "agent_lines_removed": 4
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 612,
+      "agent_lines_removed": 4
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 612,
+      "agent_lines_removed": 4
+    }
+  ]
+}

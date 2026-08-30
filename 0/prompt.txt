@@ -1,0 +1,89 @@
+Checkpoint 4 — CSV Import.
+
+Please review the existing backend and propose a simple implementation plan first. Do not change files yet.
+
+Requirements:
+- Add FrameCsvImportService for CSV processing.
+- Add POST /api/frames/import in the existing FrameController.
+- Multipart CSV upload.
+- Import is create-only, never upsert.
+- Existing frameId must be reported as duplicate and must not update the existing frame.
+- Duplicate frameId appearing again in the same CSV must also be reported as duplicate.
+- Process rows independently: valid rows are created even if other rows fail.
+- Each successful row must create the Frame and IMPORTED / CSV_UPLOAD history atomically.
+- Reject the whole file only for file-level problems such as empty file, missing required headers, unreadable content, or structurally malformed CSV.
+- Row-level errors should include row number, frameId where available, and a clear reason.
+- Return an import summary with totalRows, created, duplicates, failed, and errors.
+- Map the supplied CSV by header name and support reordered columns.
+- Keep CSV implementation simple and easy to explain. Reuse existing DTO/domain/service logic where sensible.
+- No separate import controller.
+- No frontend changes.
+- No upsert, batch framework, generic import framework, or unnecessary abstractions.
+
+Include focused tests for successful import, mixed valid/invalid rows, existing duplicates, duplicate IDs within one file, missing headers, malformed CSV, and imported history.
+
+Also call out any decisions you need me to approve before implementation.
+
+---
+
+1. Reject decision 1: do not use created_date or modified_date from the CSV. For imported frames, the server should set both timestamps to the import time, consistent with the existing POST behaviour.
+
+2. For decision 2, please check the current CreateFrameRequest validation. If environment is @NotBlank, include environment as a required CSV header and ensure a missing/blank environment results in the appropriate validation failure. Do not silently set it to null or bypass the existing validation.
+
+Other recognised CSV columns can remain optional, but when present they should still be mapped into the Frame model. Unknown extra columns can be ignored.
+
+3. Approve decision 3 as proposed: count duplicates separately from failures, include duplicate rows in the errors list, and use CSV row numbers where the first data row is row 2.
+
+4. Approve decision 4 as proposed: if the same nonblank frameId appears more than once in the file, later occurrences are duplicates even if the first occurrence was invalid.
+
+Please proceed with the implementation. Keep it simple and within Checkpoint 4 scope. Run the full backend tests when finished and report the results.
+
+---
+
+Now review only the Checkpoint 4 changes as a senior Java/Spring Boot engineer.
+
+Focus on:
+- CSV parsing and mapping correctness
+- required vs optional headers
+- file-level vs row-level error handling
+- existing and same-file duplicate handling
+- per-row transaction and rollback behaviour
+- IMPORTED / CSV_UPLOAD history correctness
+- server-managed timestamps
+- multipart API behaviour and import summary counts
+- validation reuse
+- test coverage
+
+Pay particular attention to whether malformed CSV can accidentally cause partial imports and whether each successful Frame + history creation is truly atomic and independent from other rows.
+
+Classify findings as MUST FIX / SHOULD FIX only.
+
+Keep the take-home scope in mind and avoid overengineering, unrelated refactoring, or adding new requirements.
+
+Do not change files yet.
+
+---
+
+Can you briefly explain where REQUIRES_NEW is used and why each CSV row gets an independent transaction?
+
+---
+
+How is the existing CreateFrameRequest validation reused for each CSV row?
+
+---
+
+Please implement both SHOULD FIX items.
+
+1. Add a duplicate-within-file test where the first row succeeds and the second row has the same frameId with different values. Verify:
+   - created = 1
+   - duplicates = 1
+   - the first row's data remains unchanged
+   - the duplicate row does not update it
+
+2. Add one import test to make sure a failure in one row doesn't affect the next row.
+
+Make one row fail while saving its history and verify that the frame for that row is rolled back. Then verify that the next valid row is still imported successfully with its history.
+
+Also check that the final import summary has the correct counts.
+
+After the changes, run the full backend test suite and report the result.
