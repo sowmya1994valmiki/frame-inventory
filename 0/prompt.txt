@@ -1,0 +1,120 @@
+Checkpoint 9  React CSV Import
+
+Please first review the existing CSV import backend API and the current frontend.
+
+I want to add a simple CSV import screen where the user can:
+ choose a CSV file
+ upload/import it
+ see how many rows were imported, skipped as duplicates, or failed
+ see row-level errors with the row number and reason
+ clearly understand whether the import fully succeeded, partially succeeded, or failed
+ select another file and try again
+
+Please reuse the existing POST /api/frames/import API and current UI style.
+
+Keep it simple. No new dependencies or backend changes unless something in the existing API prevents us from doing this properly.
+
+For now, don't change any code. Just tell me:
+ what the current API returns
+ what frontend changes you suggest
+ how the screen will look/work
+ any decisions you need from me before implementation
+
+---
+
+One change to the plan:
+
+Do not try to classify duplicate vs failed rows by parsing the error reason text.
+
+Keep the backend summary counts for Imported / Duplicates / Failed, and show the returned row-level errors together.
+
+We can defer separate duplicate/failed tables unless the backend provides an explicit error category.
+
+will it add complexity or good design desicion can you confirm ?
+
+---
+
+Please implement Checkpoint 9 React CSV Import as discussed
+
+Use the agreed design:
+- Add Import CSV beside New frame.
+- Allow the user to select a CSV file and start the import.
+- Reuse POST /api/frames/import with multipart/form-data.
+- Disable import until a file is selected and while uploading.
+- Show Imported / Duplicates / Failed summary counts.
+- Show all returned row errors together in one "Rows not imported" table with Row, Frame ID and Reason.
+- Do not classify rows by parsing the reason text.
+- Treat all-duplicate imports as "completed with no changes".
+- Clearly handle success, partial success and request/structural failure.
+- Allow Choose another file and View inventory.
+- Reuse the existing navigation and UI styles.
+
+Keep it simple:
+- no backend changes
+- no new dependencies
+- no router
+- no unrelated refactoring
+
+After implementation run:
+- lint
+- production build
+
+---
+
+I ahev done the testing everything looks good. please do a final senior review of Checkpoint 9 changes only.
+
+Classify findings as:
+- MUST FIX
+- SHOULD FIX
+- OPTIONAL
+
+Focus on simplicity,correctness, file upload/API handling, React/TypeScript quality, accessibility, race conditions, error states and regressions.
+
+Do not change code yet.
+Do not suggest new features or unrelated refactoring.
+
+---
+
+Please implement both SHOULD FIX items:
+
+1. Fix focus handling so focus moves after the new view renders:
+   result heading after import
+   file input after Choose another file
+
+2. Do not show a checkmark for failed imports. Use an appropriate error/neutral icon for failure. For example 
+when 19 failed one correct partially message should come.
+
+Keep everything else unchanged.
+
+Then run lint, build
+
+---
+
+The focus fix is not working in my manual test.
+
+After import completes, I do not see focus move to the result heading.
+After clicking "Choose another file", I also do not see focus move to the file input.
+
+Please inspect and reproduce the actual focus behaviour.
+
+Check document.activeElement after each transition and determine whether:
+- focus is not moving, or
+- focus moves but has no visible focus indication.
+
+Fix it in the simplest reliable way so keyboard focus clearly moves after the new view is rendered.
+
+Do not change any other CP9 behaviour.
+
+---
+
+The recent SHOULD FIX changes are not giving the expected behaviour in my manual testing.
+
+Please revert only the changes made for:
+1. focus management after import / Choose another file
+2. the separate failure icon
+
+Restore CsvImportPage.tsx to how it was before those two review fixes.
+
+Do not revert or change any other CP9 functionality.
+
+After reverting, run lint, build and git diff --check.
