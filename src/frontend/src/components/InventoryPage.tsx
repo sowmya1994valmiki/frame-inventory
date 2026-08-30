@@ -113,8 +113,6 @@ export function InventoryPage({ successMessage, focusOnMount, onNew, onImport, o
 
     const suggestionName = name as Exclude<keyof FilterValues, 'status'>
     const normalizedValue = value.trim()
-    if (normalizedValue && !filterSuggestions[suggestionName].includes(normalizedValue)) return
-
     scheduleRequest((current) => current[suggestionName] === normalizedValue
       ? current
       : { ...current, [suggestionName]: normalizedValue, page: 0 })
