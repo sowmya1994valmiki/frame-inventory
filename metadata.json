@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M1A1T1HGAB3TKTMHWGPWARTS",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 15,
+  "files_touched": [
+    "docker-compose.yml",
+    "src/backend/Dockerfile",
+    "src/backend/src/main/java/com/global/ct/frameinventory/config/RequestIdFilter.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/FrameController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/controller/HealthController.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/exception/FrameApiExceptionHandler.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/logging/LogValueSanitizer.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameCsvImportService.java",
+    "src/backend/src/main/resources/application.yml",
+    "src/backend/src/test/java/com/global/ct/frameinventory/config/RequestIdFilterIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/ActuatorHealthIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/ActuatorMetricsIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameControllerIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameCsvImportIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/exception/FrameApiExceptionHandlerTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/logging/LogValueSanitizerTest.java",
+    "src/backend/src/test/resources/application.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 292459,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 12630630,
+    "output_tokens": 62975,
+    "api_call_count": 118
+  }
+}

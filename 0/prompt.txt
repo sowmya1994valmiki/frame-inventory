@@ -1,0 +1,183 @@
+Checkpoint 10  Observability and Production Readiness
+
+Please review the current backend and Docker setup and suggest the simplest production-readiness improvements for:
+
+- Spring Boot Actuator / health endpoint
+- useful application logging
+- startup failure behaviour
+- API/server error logging
+- Docker health checks
+- basic production-readiness review
+
+Keep it lightweight for this take-home assessment.
+
+Please avoid:
+- new monitoring platforms
+- Prometheus/Grafana unless already configured
+- major architecture changes
+- unnecessary dependencies
+- unrelated refactoring
+
+Do not change code yet.
+
+First tell me:
+1. what observability/readiness features already exist,
+2. what is missing,
+3. what files you would change,
+4. which changes are MUST / SHOULD / OPTIONAL,
+5. any decisions or risks I should approve before implementation.
+6.keep it simple dont add complicated things
+
+---
+
+first i want to focus on logging can you list down what all needs to be covered
+
+---
+
+Logging decisions:
+
+APPROVE:
+- ERROR log for unexpected API/server failures with method, path and stack trace.
+- ERROR log for persistence/database failures, including safe context like frameId and CSV row number.
+- Keep Spring Boot startup failure logging as-is.
+- INFO log one CSV import summary with total/created/duplicates/failed.
+- Keep console logging only and normal Spring Boot defaults.
+- Do not log bodies, credentials, CSV contents, SQL parameters or sensitive data.
+- Expected 4xx errors should not be logged as ERROR.
+
+DEFER:
+- Successful create/update INFO logs for now.
+
+
+Please implement the minimal logging implementation and in the end give me a summary of changes.
+
+---
+
+what i sthat one test getting failed
+
+---
+
+I fixed it now please list down required healthchecks needs to be there in project. 
+
+Do not make any changes yet
+
+---
+
+Health-check decisions:
+
+APPROVE:
+- Use /actuator/health as the authoritative health endpoint.
+- Add backend Docker health check against /actuator/health.
+- Add MariaDB health check using healthcheck.sh --connect --innodb_initialized.
+- Make backend depend on MariaDB with condition: service_healthy.
+- Add a focused integration test for actuator health.
+- No custom health indicators, Prometheus/Grafana, or separate liveness/readiness endpoints.
+
+DEFER:
+- Frontend waiting for backend health.
+- Removing /api/health.
+- Health checks for unused MongoDB/OpenSearch services.
+
+Before implementation, verify that /actuator/health in this project actually reports DOWN/503 when MariaDB is unavailable.
+
+Then implement only the approved scope.
+
+---
+
+Next, please review the Metrics endpoint for checkpoint 10
+
+Check the current Spring Boot Actuator setup and tell me:
+
+- whether /actuator/metrics is currently exposed
+- what built-in metrics are already available
+- JVM memory / heap
+- GC
+- CPU
+- threads
+- HTTP request count/latency
+- database connection pool
+
+I only want lightweight built-in Actuator metrics.
+
+No Prometheus, Grafana, custom metrics, or new dependencies.
+
+Do not change code yet. Tell me what already works and the minimal changes needed.
+
+---
+
+Please implement the minimal metrics change:
+- expose health, info and metrics
+- use built-in Actuator/Micrometer only
+- no Prometheus, Grafana, custom metrics or new dependencies
+- add a focused integration test for the metrics endpoint
+
+Keep the test resilient and avoid asserting an unnecessarily large fixed metric list.
+
+After implementation run the relevant tests, full backend test suite
+
+---
+
+Please check whether the current project already has request correlation/request ID support, such as a RequestIdFilter or MDC configuration.
+
+Do not change code yet.
+
+If it does not exist, explain the simplest approach to add a request ID to backend logs and whether it is worthwhile for this take-home.
+
+---
+
+please show me exact changes need to do and do not make any chages yet
+
+---
+
+Changes look good. Please add them.
+
+Then run the focused tests, full backend test suite, and git diff --check.
+
+---
+
+Please check our API error handling.
+
+Make sure 400, 404, 409, 415 and 500 errors return a consistent response format, and that stack traces, database errors or other internal details are never returned to the client.
+
+Do not change anything yet. Just tell me if you find any gaps.
+
+---
+
+Please fix point 4 only.
+
+Do not treat every DataIntegrityViolationException as a 400.
+
+- Known client/data validation problems can return 400.
+- Known duplicate frame conflicts should remain 409.
+- Unexpected database/persistence failures should return a safe generic 500.
+- Do not expose database details to the client.
+
+Add/update focused tests for this behavior.
+
+---
+
+Please review our logging for sensitive data hygiene.
+
+Check that:
+- secrets, credentials, tokens and unnecessary personal data are not logged
+- request bodies and CSV contents are not logged
+- user-controlled values written to logs are protected against control-character/log injection
+
+Do not change code yet. Tell me what is already covered and any gaps you find.
+
+---
+
+Please fix the log-injection gap.
+
+Add a small log-value sanitizer that:
+- replaces CR, LF, tabs and other control characters
+- limits logged values to a reasonable maximum length
+
+Use it for:
+- CSV frameId values written to logs
+- request paths written to logs
+
+Do not change the existing safe database/error response behaviour.
+Keep unexpected stack traces for debugging.
+
+Add focused tests and run the backend test suite.
