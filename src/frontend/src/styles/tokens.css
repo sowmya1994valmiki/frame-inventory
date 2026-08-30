@@ -15,6 +15,10 @@
   --blue-1400: #024076;
   --green-100: #e0ecd2;
   --green-1200: #264211;
+  --red-50: #fcf8f8;
+  --red-200: #f4c8c4;
+  --red-800: #dd372a;
+  --red-1200: #75160c;
   --primary-light: var(--blue-600);
   --primary-main: var(--blue-1000);
   --primary-dark: var(--blue-1400);

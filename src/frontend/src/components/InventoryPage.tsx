@@ -18,8 +18,15 @@ const INITIAL_REQUEST: ActiveRequest = {
 
 type ActiveRequest = { id: number; params: GetFramesParams }
 type RequestUpdate = (current: GetFramesParams) => GetFramesParams
+type Props = {
+  successMessage: string | null
+  focusOnMount: boolean
+  onNew: () => void
+  onEdit: (frameId: string) => void
+}
 
-export function InventoryPage() {
+export function InventoryPage({ successMessage, focusOnMount, onNew, onEdit }: Props) {
+  const headingRef = useRef<HTMLHeadingElement>(null)
   const [queryInput, setQueryInput] = useState('')
   const [filters, setFilters] = useState<FilterValues>(EMPTY_FILTERS)
   const requestSequence = useRef(0)
@@ -31,6 +38,10 @@ export function InventoryPage() {
   const [error, setError] = useState<string | null>(null)
   const loading = settledRequestId !== request.id
   const visibleError = settledRequestId === request.id ? error : null
+
+  useEffect(() => {
+    if (focusOnMount) headingRef.current?.focus()
+  }, [focusOnMount])
   const filterSuggestions = useMemo(() => {
     const frames = result?.items ?? []
     return {
@@ -128,9 +139,12 @@ export function InventoryPage() {
   return (
     <>
       <header className="page-header"><div>
-        <h1>Frames</h1>
-        <p className="page-meta">{result && !visibleError ? `${result.totalElements.toLocaleString()} frames` : 'Search the frame inventory'}</p>
-      </div></header>
+          <h1 ref={headingRef} tabIndex={-1}>Frames</h1>
+          <p className="page-meta">{result && !visibleError ? `${result.totalElements.toLocaleString()} frames` : 'Search the frame inventory'}</p>
+        </div>
+        <button className="button button-primary" type="button" onClick={onNew}><PlusIcon /> New frame</button>
+      </header>
+      {successMessage && <div className="success-message" role="status"><CheckIcon /> {successMessage}</div>}
       <div className="inventory-layout">
         <FrameFilters query={queryInput} filters={filters} suggestions={filterSuggestions} onQueryChange={setQueryInput}
           onFilterChange={changeFilter} onClear={clearFilters} />
@@ -144,7 +158,7 @@ export function InventoryPage() {
               {loading && <div className="results-loading" role="status">
                 <span className="loading-spinner loading-spinner-small" /> Updating frames
               </div>}
-              <FrameTable frames={result.items} />
+              <FrameTable frames={result.items} onEdit={onEdit} />
               <Pagination page={result.page} size={result.size} totalElements={result.totalElements}
                 totalPages={result.totalPages} disabled={loading} onPageChange={changePage} onSizeChange={changeSize} />
             </> : null}
@@ -192,5 +206,17 @@ function SearchIcon() {
 function AlertIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
     <circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" />
+  </svg>
+}
+
+function PlusIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+}
+
+function CheckIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <path d="m5 12 4 4L19 6" />
   </svg>
 }

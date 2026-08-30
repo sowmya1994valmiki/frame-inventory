@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({ children, breadcrumbs = ['Frames'] }: { children: ReactNode; breadcrumbs?: string[] }) {
   return (
     <div className="app-shell">
       <div className="brand">
@@ -8,8 +8,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         <span className="brand-name">Global Inventory<small>Frames · OOH</small></span>
       </div>
       <header className="topbar">
-        <span>Inventory</span><span className="breadcrumb-separator" aria-hidden="true">/</span>
-        <span className="breadcrumb-current">Frames</span>
+        <span>Inventory</span>
+        {breadcrumbs.map((breadcrumb, index) => <span className="breadcrumb-part" key={`${breadcrumb}-${index}`}>
+          <span className="breadcrumb-separator" aria-hidden="true">/</span>
+          <span className={index === breadcrumbs.length - 1 ? 'breadcrumb-current' : undefined}>{breadcrumb}</span>
+        </span>)}
       </header>
       <nav className="rail" aria-label="Primary navigation">
         <div className="rail-label">Inventory</div>
