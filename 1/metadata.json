@@ -1,0 +1,108 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M198C3S4ADCG27R4352SZP5N",
+  "session_id": "01a0526a-f0ad-78f1-a35d-175d3a9300e6",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-30T11:55:15.0316439Z",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "save_step_count": 4,
+  "files_touched": [
+    "src/frontend/package-lock.json",
+    "src/frontend/src/App.css",
+    "src/frontend/src/App.tsx",
+    "src/frontend/src/components/FrameFilters.tsx",
+    "src/frontend/src/components/InventoryPage.tsx",
+    "src/frontend/src/index.css"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "320e99861475",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 44059,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 710934,
+    "output_tokens": 9060,
+    "api_call_count": 23
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-30T11:55:15.0001786Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 16,
+    "human_modified": 108,
+    "human_removed": 0,
+    "total_committed": 16,
+    "total_lines_changed": 124,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 651,
+      "user_lines_removed": 74,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/frontend/src/App.css": 161,
+        "src/frontend/src/App.tsx": 5,
+        "src/frontend/src/api/frames.ts": 76,
+        "src/frontend/src/components/AppShell.tsx": 30,
+        "src/frontend/src/components/FrameFilters.tsx": 59,
+        "src/frontend/src/components/FrameTable.tsx": 50,
+        "src/frontend/src/components/InventoryPage.tsx": 179,
+        "src/frontend/src/components/Pagination.tsx": 30,
+        "src/frontend/src/index.css": 25,
+        "src/frontend/src/styles/tokens.css": 36
+      },
+      "user_removed_per_file": {
+        "src/frontend/package-lock.json": 14,
+        "src/frontend/src/App.css": 4,
+        "src/frontend/src/App.tsx": 52,
+        "src/frontend/src/index.css": 4
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 655,
+      "agent_lines_removed": 74
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 34,
+      "user_lines_removed": 6,
+      "agent_lines_added": 655,
+      "agent_lines_removed": 74,
+      "user_added_per_file": {
+        "src/frontend/src/components/FrameFilters.tsx": 18,
+        "src/frontend/src/components/InventoryPage.tsx": 16
+      },
+      "user_removed_per_file": {
+        "src/frontend/src/components/FrameFilters.tsx": 4,
+        "src/frontend/src/components/InventoryPage.tsx": 2
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 45,
+      "user_lines_removed": 14,
+      "agent_lines_added": 655,
+      "agent_lines_removed": 74,
+      "user_added_per_file": {
+        "src/frontend/src/components/FrameFilters.tsx": 18,
+        "src/frontend/src/components/InventoryPage.tsx": 27
+      },
+      "user_removed_per_file": {
+        "src/frontend/src/components/FrameFilters.tsx": 4,
+        "src/frontend/src/components/InventoryPage.tsx": 10
+      }
+    }
+  ]
+}

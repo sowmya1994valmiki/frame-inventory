@@ -1,0 +1,60 @@
+Continue Checkpoint 6 — React Inventory + Search.
+
+Please inspect the current frontend first. CP6 functionality is already implemented and reviewed; I only want this final UI layout improvement.
+
+- Keep the dark Global Inventory navigation sidebar unchanged.
+- Move the existing Filter frames panel from the left to a horizontal section above the inventory table.
+- Search on top; below it: Status, Media type, Environment, Format, Region, with Clear all easily accessible.
+- Make the filters responsive/wrapping and give the table the full available content width.
+- Status stays dropdown: All / LIVE / INACTIVE.
+- Keep the other filters as free-text inputs.
+- Preserve existing behaviour: ~300ms debounce for text filters, immediate Status, request/loading race handling, pagination, error/loading/empty states and accessibility fixes.
+
+Keep this mainly a layout/CSS change. Do not change backend/API, add dependencies, hard-code new filter values, or refactor working logic.
+
+Afterwards run lint, production build and git diff --check, then report any MUST FIX or SHOULD FIX findings.
+
+---
+
+Make one small frontend-only CP6 improvement.
+
+For Media type, Environment, Format, and Region:
+- keep them as text inputs
+- add datalist suggestions from values already available in the frontend data
+- allow users to type any value manually
+- do not hard-code business values
+- do not convert them to strict selects
+
+Keep Status as the existing All / LIVE / INACTIVE dropdown.
+
+Preserve current debounce, request/loading handling, pagination, accessibility, and layout.
+Do not change backend/API or add dependencies.
+
+Afterwards run lint, production build, and git diff --check.
+
+---
+
+I have tested the feature i found small bug
+
+Please fix the datalist filter behaviour frontend-only.
+
+For Media type, Environment, Format, and Region:
+
+- typing should only filter/show matching suggestions locally
+- do not call the backend while the user is typing a partial value
+- call the backend only after the user selects a valid suggestion
+- clearing the input should clear that backend filter
+- keep Status immediate
+- keep the main Search q debounce unchanged
+
+Example:
+typing "R" in Environment should show suggestions such as ROADSIDE, but must not send environment=R.
+Only after selecting ROADSIDE should the API request use environment=ROADSIDE.
+
+Do not change backend/API contracts, pagination, loading/request logic, layout, or dependencies.
+
+Afterwards run lint, production build and git diff --check.
+
+---
+
+Cool everything works fine
