@@ -1,0 +1,201 @@
+Start Checkpoint 7 — React Add/Edit Frame.
+
+
+
+First inspect the current frontend and the existing backend Frame create/update API contracts and DTOs.
+
+Then propose a simple implementation plan for:
+- Add Frame form
+- Edit Frame form
+- grouped form sections matching the existing frame structure
+- client-side validation aligned with backend validation
+- immutable frame_id on edit
+- POST create integration
+- PUT update integration
+- loading, success, and error states
+
+UI decisions:
+- New Frame: user enters frame_id
+- Edit Frame: frame_id is visible but read-only
+- Status dropdown: LIVE / INACTIVE
+- New Frame defaults to LIVE
+- reuse existing design-system styling and current app layout
+- no new state-management library or unnecessary dependencies
+- no backend changes unless a real blocking mismatch is found
+
+For now, only review the current code and give me:
+1. proposed component/file changes
+2. form field/grouping approach
+3. validation approach
+4. API flow for create/edit
+5. any decisions or risks I should approve before implementation
+
+Do not make any code changes yet.
+
+---
+
+Plan mostly approved. Before implementation, apply these decisions:
+
+APPROVE:
+- One shared full-page Add/Edit form with grouped sections.
+- Local navigation state; no router.
+- New Frame: user enters frameId, status defaults to LIVE.
+- Edit: frameId visible but read-only/immutable.
+- Status dropdown: LIVE / INACTIVE.
+- Full PUT replacement for edit.
+- Normalize blank optional values to null.
+- Loading/error states and disable duplicate submissions.
+- Return to inventory after successful create/update with a simple success message.
+- Client validation should match the existing backend DTO/Bean Validation contract.
+- No backend/API changes.
+
+REJECT / SIMPLIFY:
+- No dirty-form cancel confirmation/autosave.
+- No validation based only on DB/JPA column limits.
+- No invented backend field-error contract; map field errors only if the existing API already provides them.
+- No unnecessary notification/navigation infrastructure.
+- No extra dependencies or overengineering.
+
+Before implementation, confirm that all proposed form fields are actually supported by the current create/update request DTO and are not CSV-only/server-managed fields.
+
+Do not change code yet. Confirm the final scope and field list first.
+
+---
+
+Approved. Please implement Checkpoint 7 using the confirmed scope and decisions.
+
+Keep the implementation simple and reuse the existing design-system/layout.
+
+Do not change backend code/API contracts, add dependencies, or introduce unrelated refactoring.
+
+After implementation, run:
+- lint
+- production build
+- git diff --check
+
+---
+
+Please do a senior-level review of Checkpoint 7 only.
+
+Report findings as:
+- MUST FIX
+- SHOULD FIX
+
+Focus on functional bugs, API contract mismatches, validation issues, state/loading/error handling, accessibility, and unnecessary complexity.
+
+Do not change any code yet.
+
+---
+
+How much complexity would preserving inventory search/filter/page state add? Is it worth doing for this task?
+
+---
+
+Approved:
+1. Add proper required-field accessibility using aria-required or required.
+2. Add minimal focus management when opening/closing the editor.
+3. Avoid setSubmitting(false) after successful submission unmounts the editor.
+
+Reject preserving inventory query/filter/page/page-size state for CP7. Keep navigation simple; returning to a fresh inventory view after save/cancel is acceptable for this checkpoint.
+
+Keep fixes minimal. Do not change backend/API contracts, add dependencies, or refactor unrelated code.
+
+Afterwards run build and test
+
+---
+
+Please review two small improvements before changing code.
+
+1. Persistence constraint errors
+When a DB constraint such as:
+"Data too long for column 'country_code'"
+occurs, do not return only:
+"Frame data violates a persistence constraint".
+
+Map supported constraint failures to a safe structured field error, for example:
+
+field: location.countryCode
+message: must be at most 2 characters
+
+Do not expose raw SQL, MariaDB messages, table names, connection details, or stack traces.
+Keep the existing generic persistence error as fallback for unknown constraint failures.
+Reuse the existing field/message error response format if possible.
+
+2. Country selector in the React form
+Replace the free-text countryCode input with a dropdown/select showing:
+
+CODE - Country name
+
+For example:
+GB - United Kingdom
+IN - India
+DE - Germany
+
+But submit/store only the 2-letter country code, e.g. "GB".
+
+Keep this frontend-side if possible. Do not change the backend/API contract just for the dropdown.
+
+Do not change code yet. First confirm the minimal approach and whether any backend changes are actually required.
+
+---
+
+Approve and implement only ### 2. Country selector.
+
+- Add a dependency-free static country list.
+- Replace countryCode free text with a select showing:
+  CODE - Country name
+- Submit/store only the code value.
+- Keep the field optional and submit null when unset.
+- Preserve legacy UK values when editing existing records.
+- Do not silently convert UK to GB.
+- Do not change the backend/API contract for this.
+
+Hold ### 1. Persistence constraint errors for now.
+Do not make any changes to backend persistence/error handling yet.
+
+After the country selector change, run lint, production build, and git diff --check.
+
+---
+
+Please review the server-side error handling for creating and updating frames.
+
+My goal is not to handle only countryCode or one specific database column.
+
+If POST /api/frames or PUT /api/frames/{frameId} fails on the server, I want the frontend to receive a useful and safe error that it can display to the user.
+
+Please suggest the simplest consistent approach covering:
+- request/Bean Validation errors
+- duplicate/conflict errors
+- persistence/data-integrity constraint errors
+- frame not found
+- other expected business errors
+- unexpected server errors
+
+Prefer reusing the existing ProblemDetail and errors [{field, message}] response structure.
+
+Important:
+- do not expose raw SQL, database exception messages, stack traces, table names, connection details, or other internal information
+- return a specific user-friendly message when the backend knows the cause
+- keep a generic safe message for unknown/unexpected failures
+- avoid parsing database error strings or creating mappings for individual DB columns unless absolutely necessary
+- frontend should display the backend-provided message/field errors
+- keep the solution simple for this take-home assessment
+- no new dependencies or unnecessary architecture
+
+Do not change any code yet.
+
+First inspect the current create/update exception flow and propose the minimal approach, including what should change in backend and frontend.
+
+---
+
+Okay thanks for details i made the change that when something data related issue server will send meaningful message 
+
+in FrameApiExceptionHandler
+
+  return problem(
+            HttpStatus.BAD_REQUEST,
+            "Frame data could not be persisted",
+            "he frame could not be saved. Please check the entered values and try again.",
+            request
+        );
+    }
