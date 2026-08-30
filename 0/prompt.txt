@@ -1,0 +1,82 @@
+Start Checkpoint 12  Final Review + README.
+
+Please review the complete project as a fresh senior reviewer.
+
+Check backend, frontend, Docker, tests, configuration, dead code and README.
+
+Classify findings only as:
+- MUST FIX
+- SHOULD FIX
+- CAN WAIT
+
+Keep this appropriate for a take-home exercise and avoid overengineering.
+
+Do not change any code yet.
+
+---
+
+For the inventory filters, would it be better to add one backend endpoint like GET /api/frames/filter-options that returns all unique region, format, mediaType and environment values from the full dataset?
+
+The frontend could then use these values for the filter dropdowns instead of deriving them from the current page.
+
+Please review this approach and tell me if it is a good fit for this project. Do not change code yet.
+
+---
+
+Please update the inventory filters to allow free typing.
+
+For mediaType, environment, format and region, send whatever non-blank value the user types to the existing GET /api/frames API, even if it is not present in the current suggestion list.
+
+Selected suggestions should continue to work the same way.
+
+Do not add a new backend endpoint. Keep the current API and UI structure, and change only the frontend filter behavior.
+
+---
+
+The previous change was not enough. Typing a value such as "sowmya" into Environment still shows the normal 20 records.
+
+Please trace the complete frontend flow for mediaType, environment, format and region:
+
+input onChange
+→ filter state
+→ scheduleRequest/debounce
+→ getFrames request params
+→ actual GET /api/frames URL
+
+Find why a manually typed value is not reaching the backend request.
+
+Expected behavior:
+typing environment=sowmya must result in a request containing environment=sowmya, and if the backend has no matches the UI should show the empty state.
+
+Please fix the actual root cause. Do not add a new backend endpoint or change backend filtering.
+
+---
+
+Please review the root README.md against the actual project.
+
+Check:
+- features and architecture
+- Docker/run commands
+- API endpoints
+- CSV import and history behaviour
+- testing/build commands
+- design decisions,assumptions and trade-offs
+- missing or outdated information
+
+Classify findings as MUST FIX, SHOULD FIX, or CAN WAIT.
+
+Do not change anything yet.
+
+---
+
+I have added the MUST FIX README changes.
+
+Please review the README against the actual implementation and confirm whether the changes I added are correct and accurate.
+
+Only report anything that is still incorrect. Do not change any files.
+
+---
+
+I have fixed above suggestions.
+
+Please review and report if something is still incorrect. do not change any files.

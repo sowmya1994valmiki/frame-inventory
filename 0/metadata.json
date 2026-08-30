@@ -1,0 +1,103 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M1AEBVAWQVG0PPDW9YNFP4YK",
+  "session_id": "01a05464-5bc9-7203-a75e-e62143a33ab7",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-30T22:59:11.9444864Z",
+  "branch": "master",
+  "checkpoints_count": 7,
+  "save_step_count": 5,
+  "files_touched": [
+    "README.md",
+    "src/frontend/src/components/InventoryPage.tsx",
+    "src/frontend/vite.config.ts"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "1fe1ffc2380f",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 440814,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 11834230,
+    "output_tokens": 32493,
+    "api_call_count": 105
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-30T22:59:11.8213591Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 139,
+    "human_modified": 21,
+    "human_removed": 0,
+    "total_committed": 139,
+    "total_lines_changed": 160,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 2
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 110,
+      "user_lines_removed": 17,
+      "agent_lines_added": 3,
+      "agent_lines_removed": 2,
+      "user_added_per_file": {
+        "README.md": 110
+      },
+      "user_removed_per_file": {
+        "README.md": 17
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 48,
+      "user_lines_removed": 2,
+      "agent_lines_added": 113,
+      "agent_lines_removed": 19,
+      "user_added_per_file": {
+        "README.md": 48
+      },
+      "user_removed_per_file": {
+        "README.md": 2
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 2,
+      "user_lines_removed": 2,
+      "agent_lines_added": 159,
+      "agent_lines_removed": 19,
+      "user_added_per_file": {
+        "README.md": 2
+      },
+      "user_removed_per_file": {
+        "README.md": 2
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 159,
+      "agent_lines_removed": 19
+    }
+  ]
+}
