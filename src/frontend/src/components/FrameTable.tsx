@@ -2,7 +2,13 @@ import type { FrameSummary } from '../api/frames'
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 
-export function FrameTable({ frames, onEdit }: { frames: FrameSummary[]; onEdit: (frameId: string) => void }) {
+type Props = {
+  frames: FrameSummary[]
+  onView: (frameId: string) => void
+  onEdit: (frameId: string) => void
+}
+
+export function FrameTable({ frames, onView, onEdit }: Props) {
   return (
     <div className="table-scroll" role="region" tabIndex={0} aria-label="Scrollable frame inventory table">
       <table className="inventory-table">
@@ -14,7 +20,9 @@ export function FrameTable({ frames, onEdit }: { frames: FrameSummary[]; onEdit:
         </tr></thead>
         <tbody>{frames.map((frame) => (
           <tr key={frame.frameId}>
-            <td><span className="frame-id">{frame.frameId}</span></td>
+            <td><button className="frame-link frame-id" type="button" onClick={() => onView(frame.frameId)}>
+              {frame.frameId}
+            </button></td>
             <td><StackedValue primary={frame.station || frame.airport} secondary={frame.address} /></td>
             <td><StackedValue primary={frame.town} secondary={frame.region} /></td>
             <td>{displayValue(frame.mediaType)}</td><td>{displayValue(frame.format)}</td>

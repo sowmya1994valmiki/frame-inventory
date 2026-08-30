@@ -22,10 +22,11 @@ type Props = {
   successMessage: string | null
   focusOnMount: boolean
   onNew: () => void
+  onView: (frameId: string) => void
   onEdit: (frameId: string) => void
 }
 
-export function InventoryPage({ successMessage, focusOnMount, onNew, onEdit }: Props) {
+export function InventoryPage({ successMessage, focusOnMount, onNew, onView, onEdit }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const [queryInput, setQueryInput] = useState('')
   const [filters, setFilters] = useState<FilterValues>(EMPTY_FILTERS)
@@ -158,7 +159,7 @@ export function InventoryPage({ successMessage, focusOnMount, onNew, onEdit }: P
               {loading && <div className="results-loading" role="status">
                 <span className="loading-spinner loading-spinner-small" /> Updating frames
               </div>}
-              <FrameTable frames={result.items} onEdit={onEdit} />
+              <FrameTable frames={result.items} onView={onView} onEdit={onEdit} />
               <Pagination page={result.page} size={result.size} totalElements={result.totalElements}
                 totalPages={result.totalPages} disabled={loading} onPageChange={changePage} onSizeChange={changeSize} />
             </> : null}

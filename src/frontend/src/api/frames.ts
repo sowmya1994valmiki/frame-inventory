@@ -86,6 +86,21 @@ export type Frame = FrameWritableDetails & {
   modifiedDate: string
 }
 
+export type FrameHistoryEventType = 'CREATED' | 'IMPORTED' | 'UPDATED'
+export type FrameHistorySource = 'MANUAL' | 'CSV_UPLOAD'
+
+export type FrameFieldChange = {
+  old: string | null
+  new: string | null
+}
+
+export type FrameHistoryEntry = {
+  eventType: FrameHistoryEventType
+  occurredAt: string
+  source: FrameHistorySource
+  changedFields: Record<string, FrameFieldChange>
+}
+
 export type FramePage = {
   items: FrameSummary[]
   page: number
@@ -135,6 +150,10 @@ export async function getFrames(
 
 export function getFrame(frameId: string, signal?: AbortSignal): Promise<Frame> {
   return request<Frame>(`/api/frames/${encodeURIComponent(frameId)}`, { signal })
+}
+
+export function getFrameHistory(frameId: string, signal?: AbortSignal): Promise<FrameHistoryEntry[]> {
+  return request<FrameHistoryEntry[]>(`/api/frames/${encodeURIComponent(frameId)}/history`, { signal })
 }
 
 export function createFrame(payload: CreateFrameRequest): Promise<Frame> {
