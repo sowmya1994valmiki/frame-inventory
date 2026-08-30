@@ -240,10 +240,15 @@ class FrameCsvImportIntegrationTest {
     }
 
     @Test
-    void recordsImportedCsvHistory() throws Exception {
-        String csv = REQUIRED_HEADERS + "\n"
-            + "history-import,DIGITAL,D6,LIVE,W1J 9DZ,SITE-1,London,London\n";
+    void importedFrameIsSearchableAndRecordsImportedHistory() throws Exception {
+        String csv = REQUIRED_HEADERS + ",station\n"
+            + "history-import,DIGITAL,D6,LIVE,W1J 9DZ,SITE-1,London,London,Imported Station\n";
         importCsv(csv).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/frames").param("q", "Imported Station"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(1)))
+            .andExpect(jsonPath("$.items[0].frameId").value("history-import"));
 
         mockMvc.perform(get("/api/frames/{frameId}/history", "history-import"))
             .andExpect(status().isOk())

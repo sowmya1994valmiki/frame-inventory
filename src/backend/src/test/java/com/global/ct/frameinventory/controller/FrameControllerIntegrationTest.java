@@ -2,12 +2,16 @@ package com.global.ct.frameinventory.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -426,6 +431,29 @@ class FrameControllerIntegrationTest {
     }
 
     @Test
+    void returnsProblemDetailsForUnsupportedMethodsAndMediaTypes() throws Exception {
+        mockMvc.perform(delete("/api/frames/{frameId}", "missing"))
+            .andExpect(status().isMethodNotAllowed())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(header().string(
+                HttpHeaders.ALLOW,
+                allOf(containsString("GET"), containsString("PUT"))
+            ))
+            .andExpect(jsonPath("$.status").value(405))
+            .andExpect(jsonPath("$.title").value("Method not allowed"))
+            .andExpect(jsonPath("$.instance").value("/api/frames/missing"));
+
+        mockMvc.perform(post("/api/frames")
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("not-json"))
+            .andExpect(status().isUnsupportedMediaType())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.status").value(415))
+            .andExpect(jsonPath("$.title").value("Unsupported media type"))
+            .andExpect(jsonPath("$.instance").value("/api/frames"));
+    }
+
+    @Test
     void searchesWithApprovedFiltersAndReturnsOnlySummaryFields() throws Exception {
         create(createRequest(
             "target", "LIVE", "DIGITAL", "UNDERGROUND", "D6", "London", "Green Park", "Platform"
@@ -455,7 +483,62 @@ class FrameControllerIntegrationTest {
     }
 
     @Test
+    void filtersByRegionIndependentlyOfFreeTextSearch() throws Exception {
+        create(createRequest(
+            "london-frame", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Shared Station", "Shared Address"
+        ));
+        create(createRequest(
+            "scotland-frame", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "Scotland", "Shared Station", "Shared Address"
+        ));
+
+        mockMvc.perform(get("/api/frames").param("region", "  london  "))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(1)))
+            .andExpect(jsonPath("$.items[0].frameId").value("london-frame"));
+    }
+
+    @Test
+    void createUpdateSearchAndHistoryRemainIntegrated() throws Exception {
+        String request = createRequest(
+            "cross-flow", "LIVE", "DIGITAL", "UNDERGROUND", "D6",
+            "London", "Old Station", "Address"
+        );
+        create(request);
+        ObjectNode update = updateRequest(request);
+        ((ObjectNode) update.get("site")).put("station", "New Station");
+
+        mockMvc.perform(put("/api/frames/{frameId}", "cross-flow")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(update.toString()))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/frames").param("q", "New Station"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(1)))
+            .andExpect(jsonPath("$.items[0].frameId").value("cross-flow"));
+        mockMvc.perform(get("/api/frames").param("q", "Old Station"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(0)));
+        mockMvc.perform(get("/api/frames/{frameId}/history", "cross-flow"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].eventType").value("UPDATED"))
+            .andExpect(jsonPath("$[0].changedFields['site.station'].old").value("Old Station"))
+            .andExpect(jsonPath("$[0].changedFields['site.station'].new").value("New Station"))
+            .andExpect(jsonPath("$[1].eventType").value("CREATED"));
+    }
+
+    @Test
     void paginatesWithStableSortingAndRejectsInvalidPageOptions() throws Exception {
+        mockMvc.perform(get("/api/frames").param("size", "1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(0)))
+            .andExpect(jsonPath("$.page").value(0))
+            .andExpect(jsonPath("$.totalElements").value(0))
+            .andExpect(jsonPath("$.totalPages").value(0));
+
         create(createRequest(
             "frame-b", "LIVE", "DIGITAL", "UNDERGROUND", "D6", "London", "Station", "Address"
         ));
@@ -473,6 +556,31 @@ class FrameControllerIntegrationTest {
             .andExpect(jsonPath("$.size").value(1))
             .andExpect(jsonPath("$.totalElements").value(2))
             .andExpect(jsonPath("$.totalPages").value(2));
+
+        mockMvc.perform(get("/api/frames")
+                .param("page", "2")
+                .param("size", "1")
+                .param("sort", "frameId,asc"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items", hasSize(0)))
+            .andExpect(jsonPath("$.page").value(2))
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andExpect(jsonPath("$.totalPages").value(2));
+
+        mockMvc.perform(get("/api/frames")
+                .param("size", "2")
+                .param("sort", "status,desc"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items[0].frameId").value("frame-a"))
+            .andExpect(jsonPath("$.items[1].frameId").value("frame-b"));
+
+        mockMvc.perform(get("/api/frames").param("page", "-1"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value("page must be zero or greater"));
+
+        mockMvc.perform(get("/api/frames").param("size", "0"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value("size must be between 1 and 100"));
 
         mockMvc.perform(get("/api/frames").param("size", "101"))
             .andExpect(status().isBadRequest())

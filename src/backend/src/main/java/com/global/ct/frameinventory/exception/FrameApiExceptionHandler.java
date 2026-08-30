@@ -5,11 +5,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -99,6 +104,42 @@ class FrameApiExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    ResponseEntity<ProblemDetail> handleMethodNotSupported(
+        HttpRequestMethodNotSupportedException exception,
+        HttpServletRequest request
+    ) {
+        ProblemDetail problem = problemDetail(
+            HttpStatus.METHOD_NOT_ALLOWED,
+            "Method not allowed",
+            exception.getMessage(),
+            request
+        );
+        ResponseEntity.BodyBuilder response = ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED);
+        if (exception.getSupportedHttpMethods() != null) {
+            response.allow(exception.getSupportedHttpMethods().toArray(HttpMethod[]::new));
+        }
+        return response.body(problem);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    ResponseEntity<ProblemDetail> handleMediaTypeNotSupported(
+        HttpMediaTypeNotSupportedException exception,
+        HttpServletRequest request
+    ) {
+        ProblemDetail problem = problemDetail(
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+            "Unsupported media type",
+            exception.getMessage(),
+            request
+        );
+        ResponseEntity.BodyBuilder response = ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        if (!exception.getSupportedMediaTypes().isEmpty()) {
+            response.header(HttpHeaders.ACCEPT, MediaType.toString(exception.getSupportedMediaTypes()));
+        }
+        return response.body(problem);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<ProblemDetail> handleDataIntegrityViolation(
         DataIntegrityViolationException exception,
@@ -118,9 +159,18 @@ class FrameApiExceptionHandler {
         String detail,
         HttpServletRequest request
     ) {
+        return ResponseEntity.status(status).body(problemDetail(status, title, detail, request));
+    }
+
+    private ProblemDetail problemDetail(
+        HttpStatus status,
+        String title,
+        String detail,
+        HttpServletRequest request
+    ) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
         problem.setTitle(title);
         problem.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.status(status).body(problem);
+        return problem;
     }
 }

@@ -86,13 +86,53 @@ class FrameServiceTest {
             createRequest.site(), createRequest.technical(), createRequest.commercial(),
             createRequest.integrations()
         );
-        when(repository.findById("unchanged")).thenReturn(Optional.of(existing));
+        when(repository.findOneByFrameId("unchanged")).thenReturn(Optional.of(existing));
 
         var response = service.replaceFrame("unchanged", updateRequest);
 
         assertThat(response.modifiedDate()).isEqualTo(Instant.parse("2026-08-29T11:00:00Z"));
+        verify(repository).findOneByFrameId("unchanged");
         verify(repository, never()).saveAndFlush(any(Frame.class));
         verify(historyRepository, never()).save(any(FrameHistory.class));
+    }
+
+    @Test
+    void getReturnsStoredFrameIdCasingForCaseInsensitiveLookup() {
+        CreateFrameRequest createRequest = minimalRequest("Stored-Case");
+        Frame existing = new FrameMapper().toNewEntity(
+            createRequest,
+            LocalDateTime.of(2026, 8, 29, 11, 0)
+        );
+        when(repository.findOneByFrameId("stored-case")).thenReturn(Optional.of(existing));
+
+        var response = service.getFrame("stored-case");
+
+        assertThat(response.frameId()).isEqualTo("Stored-Case");
+        verify(repository).findOneByFrameId("stored-case");
+    }
+
+    @Test
+    void updatePreservesStoredFrameIdCasingForCaseInsensitiveLookup() {
+        CreateFrameRequest createRequest = minimalRequest("Stored-Case");
+        Frame existing = new FrameMapper().toNewEntity(
+            createRequest,
+            LocalDateTime.of(2026, 8, 29, 11, 0)
+        );
+        UpdateFrameRequest updateRequest = new UpdateFrameRequest(
+            createRequest.mediaType(), createRequest.format(), createRequest.environment(),
+            "INACTIVE", null, createRequest.location(), createRequest.site(),
+            createRequest.technical(), createRequest.commercial(), createRequest.integrations()
+        );
+        when(repository.findOneByFrameId("stored-case")).thenReturn(Optional.of(existing));
+        when(repository.saveAndFlush(any(Frame.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var response = service.replaceFrame("stored-case", updateRequest);
+
+        assertThat(response.frameId()).isEqualTo("Stored-Case");
+        assertThat(response.status()).isEqualTo("INACTIVE");
+        verify(repository).findOneByFrameId("stored-case");
+        verify(historyRepository).save(any(FrameHistory.class));
     }
 
     private CreateFrameRequest minimalRequest(String frameId) {

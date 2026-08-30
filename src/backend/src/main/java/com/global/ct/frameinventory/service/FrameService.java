@@ -113,7 +113,7 @@ public class FrameService {
 
     @Transactional(readOnly = true)
     public FrameResponse getFrame(String frameId) {
-        return repository.findById(frameId)
+        return repository.findOneByFrameId(frameId)
             .map(mapper::toResponse)
             .orElseThrow(() -> new FrameNotFoundException(frameId));
     }
@@ -135,7 +135,7 @@ public class FrameService {
 
     @Transactional
     public FrameResponse replaceFrame(String frameId, UpdateFrameRequest request) {
-        Frame existing = repository.findById(frameId)
+        Frame existing = repository.findOneByFrameId(frameId)
             .orElseThrow(() -> new FrameNotFoundException(frameId));
         Instant occurredAt = now();
         Frame replacement = mapper.toReplacement(existing, request, toLocalDateTime(occurredAt));
