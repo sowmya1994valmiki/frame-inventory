@@ -148,7 +148,7 @@ class FrameApiExceptionHandler {
         return problem(
             HttpStatus.BAD_REQUEST,
             "Frame data could not be persisted",
-            "Frame data violates a persistence constraint",
+            "The frame could not be saved. Please check the entered values and try again.",
             request
         );
     }
