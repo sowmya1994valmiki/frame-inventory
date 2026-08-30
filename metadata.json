@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "01M186JE2C84QP27Y6QFV5VMF5",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 13,
+  "files_touched": [
+    "src/backend/README.md",
+    "src/backend/src/main/java/com/global/ct/frameinventory/exception/FrameApiExceptionHandler.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/repository/FrameRepository.java",
+    "src/backend/src/main/java/com/global/ct/frameinventory/service/FrameService.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameControllerIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/controller/FrameCsvImportIntegrationTest.java",
+    "src/backend/src/test/java/com/global/ct/frameinventory/service/FrameServiceTest.java"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 138606,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8415898,
+    "output_tokens": 44701,
+    "api_call_count": 92
+  }
+}

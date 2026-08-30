@@ -1,0 +1,127 @@
+Checkpoint 5 — Backend Hardening.
+
+Please review the current backend and propose a focused hardening plan first. Do not change files yet.
+
+Review these areas:
+
+- Integration gaps between create, update, history, CSV import, and search
+- createdDate / modifiedDate behaviour across create, update, no-op update, and CSV import
+- Any version-related behaviour already present in the model; do not introduce optimistic locking unless there is a real requirement
+- Search across embedded fields such as address, town, station, airport, site number, region
+- Pagination edge cases: empty results, page beyond last page, invalid page/size, stable sorting
+- Validation behaviour and ProblemDetail responses for 400, 404, 405, 409, 415 and malformed JSON
+- Unknown JSON properties
+- MariaDB-specific behaviour that H2 may not catch, especially JSON history storage, timestamps/precision, constraints, and repository queries
+
+Keep the take-home scope in mind. Prefer targeted tests and small fixes over refactoring or new abstractions.
+
+For each finding, classify it as:
+- MUST FIX
+- SHOULD FIX
+- NO CHANGE NEEDED
+
+Call out any behaviour decisions you need me to approve before implementation.
+
+---
+
+list down must fix and should fix with numbers first. I will talk about my decisions next
+
+---
+
+just show me the change required for must fix 1
+ 1. MUST FIX — Add region to free-text search and test all embedded search fields.
+
+dont make any change yet
+
+---
+
+Reject MUST FIX 1.
+
+Region is already searchable using the separate `region` filter. It was not part of the agreed free-text `q` fields, so I don't want to change the existing search behaviour just for hardening.
+
+Please keep `q` as it is and just make sure the region filter is properly tested.
+
+---
+
+can you exaplain me what this exactly means
+
+ 3. SHOULD FIX — Add cross-flow tests covering create/update/import/search/history interoperability.
+
+---
+
+what do you exactly mean by  4. SHOULD FIX — Make JSON whitespace normalization consistent with CSV import
+
+give me an example
+
+---
+
+My decisions:
+
+1. Reject. Region already has its own dedicated filter and is not part of the agreed free-text q contract. Keep q unchanged and just ensure the region filter is tested.
+
+2. Accept. Make 405 and 415 use the same ProblemDetail-style API contract and preserve normal HTTP headers such as Allow.
+
+3. Accept, but keep it small. Add only a couple of useful cross-flow scenarios rather than a large interoperability test matrix.
+
+4. Reject. Do not introduce new JSON trimming/normalization rules that were not part of the API requirements. Keep the current JSON semantics unchanged.
+
+5. Accept, but keep the tests focused on meaningful pagination behaviour: empty results, beyond-last page, invalid page/size, and deterministic sorting.
+
+6. Accept. Run a narrow MariaDB smoke verification using the existing setup. Do not introduce Testcontainers or other new infrastructure.
+
+7. Accept. Keep CSV createdDate and modifiedDate server-owned and continue ignoring CSV timestamp values.
+
+8. Accept. Keep the current MariaDB case-insensitive frameId behaviour and document it. Do not introduce collation or schema migration changes for this exercise.
+
+---
+
+Approved. Please implement this revised scope exactly as listed.
+
+Keep the changes focused and avoid unrelated refactoring.
+
+After implementation:
+- run the full backend test suite
+- run the MariaDB smoke verification
+- report any MUST FIX / SHOULD FIX findings before making further changes
+
+---
+
+Can you briefly explain why GET returns the URL casing instead of the stored frameId casing, and what the smallest fix would be? Do not change files yet.
+
+---
+
+Before I finish Checkpoint 5, I’m considering adding a separate generated Long id to Frame:
+
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+and keeping frameId as a unique, immutable business identifier instead of the JPA @Id.
+
+Please review the current code and tell me:
+
+1. How big is this change at this stage?
+2. Exactly which entities, repositories, services, history relationships, APIs, CSV import logic and tests would be affected?
+3. Would the database schema or frame_history foreign key need to change?
+4. Can the REST API continue using frameId, e.g. GET /api/frames/{frameId} and PUT /api/frames/{frameId}, without exposing the generated id?
+5. What practical benefit would the generated id give this project?
+6. What new risks or complexity would it introduce?
+7. Given the current requirements and implementation, would you recommend making this change or keeping frameId as the @Id?
+
+Do not change any files yet. I only want an impact assessment and recommendation.
+
+---
+
+dont worry about the data, currently i dont have any data on db still is it add complexity ?
+
+---
+
+Okay i will avoid for no wbecause i have frame_id which is unique i ma just thinking of generating it automatically decreases complexity for user.
+
+---
+
+Agreed. Keep the current Frame identity design unchanged.
+
+Do not add a generated Long id or automatic frameId generation.
+
+Please proceed only with the previously discussed small casing fix for GET/update lookup, add focused coverage, run the full backend tests, and report the result.
