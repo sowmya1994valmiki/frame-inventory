@@ -25,4 +25,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics
+
+logging:
+  pattern:
+    level: "%5p [requestId=%X{requestId:-none}]"

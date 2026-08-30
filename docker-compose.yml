@@ -22,9 +22,12 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - mongodb
-      - mariadb-primary
-      - opensearch
+      mongodb:
+        condition: service_started
+      mariadb-primary:
+        condition: service_healthy
+      opensearch:
+        condition: service_started
     networks:
       - frame-inventory
 
@@ -71,6 +74,12 @@ services:
       MARIADB_PASSWORD: app
     volumes:
       - mariadb-primary-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - frame-inventory
 

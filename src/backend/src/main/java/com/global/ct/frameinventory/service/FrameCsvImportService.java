@@ -26,11 +26,14 @@ import com.global.ct.frameinventory.dto.SiteDto;
 import com.global.ct.frameinventory.dto.TechnicalDto;
 import com.global.ct.frameinventory.exception.DuplicateFrameException;
 import com.global.ct.frameinventory.exception.InvalidCsvFileException;
+import com.global.ct.frameinventory.logging.LogValueSanitizer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.DuplicateHeaderMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +43,8 @@ import jakarta.validation.Validator;
 
 @Service
 public class FrameCsvImportService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameCsvImportService.class);
 
     private static final Set<String> REQUIRED_HEADERS = Set.of(
         "frame_id", "type_classic_digital", "format", "status",
@@ -96,11 +101,27 @@ public class FrameCsvImportService {
                 errors.add(new FrameCsvImportError(rowNumber, frameId, exception.getMessage()));
             } catch (DataAccessException exception) {
                 failed++;
+                LOGGER.error(
+                    "CSV row persistence failed row={} frameId={} exceptionType={}",
+                    rowNumber,
+                    LogValueSanitizer.sanitize(frameId),
+                    exception.getClass().getSimpleName()
+                );
                 errors.add(new FrameCsvImportError(rowNumber, frameId, "Frame could not be persisted"));
             }
         }
 
-        return new FrameCsvImportSummary(records.size(), created, duplicates, failed, errors);
+        FrameCsvImportSummary summary = new FrameCsvImportSummary(
+            records.size(), created, duplicates, failed, errors
+        );
+        LOGGER.info(
+            "CSV import completed total={} created={} duplicates={} failed={}",
+            summary.totalRows(),
+            summary.created(),
+            summary.duplicates(),
+            summary.failed()
+        );
+        return summary;
     }
 
     private List<CSVRecord> parse(MultipartFile file) {

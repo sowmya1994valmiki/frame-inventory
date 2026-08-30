@@ -37,7 +37,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/frames")
-@CrossOrigin(origins = "*")
 public class FrameController {
 
     private static final Set<String> SORT_FIELDS = Set.of(

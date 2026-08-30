@@ -156,8 +156,8 @@ class FrameControllerIntegrationTest {
                     "London", "Station", "Address"
                 )))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.title").value("Frame data could not be persisted"))
-            .andExpect(jsonPath("$.detail").value("Frame data violates a persistence constraint"));
+            .andExpect(jsonPath("$.title").value("Invalid frame data"))
+            .andExpect(jsonPath("$.detail").value("The supplied frame data is invalid"));
     }
 
     @Test

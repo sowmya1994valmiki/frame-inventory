@@ -18,3 +18,9 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

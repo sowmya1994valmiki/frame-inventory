@@ -19,9 +19,12 @@ import com.global.ct.frameinventory.repository.FrameRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -31,6 +34,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(OutputCaptureExtension.class)
 class FrameCsvImportIntegrationTest {
 
     private static final String REQUIRED_HEADERS =
@@ -210,6 +214,26 @@ class FrameCsvImportIntegrationTest {
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[0].eventType").value("IMPORTED"))
             .andExpect(jsonPath("$[0].source").value("CSV_UPLOAD"));
+    }
+
+    @Test
+    void sanitizesCsvFrameIdsBeforeLoggingPersistenceFailures(CapturedOutput output) throws Exception {
+        String unsafeFrameId = "unsafe\nid";
+        doThrow(new DataIntegrityViolationException("history insert failed"))
+            .when(historyRepository)
+            .saveAndFlush(argThat(history ->
+                unsafeFrameId.equals(history.getFrame().getFrameId())
+            ));
+        String csv = REQUIRED_HEADERS + "\n"
+            + "\"unsafe\nid\",DIGITAL,D6,LIVE,W1J 9DZ,SITE-1,London,London\n";
+
+        importCsv(csv)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.failed").value(1));
+
+        assertThat(output)
+            .contains("CSV row persistence failed row=2 frameId=unsafe_id")
+            .doesNotContain("frameId=unsafe\nid");
     }
 
     @Test
