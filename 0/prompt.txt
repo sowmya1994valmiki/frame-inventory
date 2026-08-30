@@ -1,0 +1,46 @@
+Start Checkpoint 11 Docker End-to-End verification.
+
+Run the application from a clean Docker environment and test the complete workflow using the actual MariaDB.
+
+Verify backend, frontend, health checks, create, search, edit, history, CSV import and data persistence after restart.
+
+Do not change code unless you find a genuine end-to-end problem.
+
+First perform the verification and report any issues you find.
+
+---
+
+Yes, do a clean Docker verification, but no need for --no-cache or --force-recreate.
+
+Please use:
+
+docker compose down --volumes --remove-orphans
+docker compose up -d --build
+
+Then continue the end-to-end verification.
+
+---
+
+Please keep the diagnosis minimal
+Only check which process is using port 8080 first
+Do not run broad Docker/process inspection ucless that result is insufficient
+
+---
+
+Please keep the frontend verification minimal
+Do not modify any frame data just to test rendering
+Use a read-only headless browser check againt http://localhost:3000 and verify:
+- React render succesfully
+- inventory page loads
+- imported inventory is visible
+
+---
+
+I manually removed MongoDB and Opensearch from docker-compose
+Please cross check the compose file with valid config, MariaDB is healthy, Backend becoms healthy and frontend starts and can reach the backend
+Do not change code unless you find a real issue
+
+---
+
+I cancelled the previous command by mistake, please rerun the final docker smoke test to remove the old orphans and verify MariaDB
+Do not change any code
