@@ -32,11 +32,14 @@ import com.global.ct.frameinventory.entity.SiteDetails;
 import com.global.ct.frameinventory.entity.TechnicalDetails;
 import com.global.ct.frameinventory.exception.DuplicateFrameException;
 import com.global.ct.frameinventory.exception.FrameNotFoundException;
+import com.global.ct.frameinventory.logging.LogValueSanitizer;
 import com.global.ct.frameinventory.mapper.FrameMapper;
 import com.global.ct.frameinventory.repository.FrameHistoryRepository;
 import com.global.ct.frameinventory.repository.FrameRepository;
 import com.global.ct.frameinventory.specification.FrameSpecifications;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
@@ -49,6 +52,8 @@ import jakarta.persistence.EntityManager;
 
 @Service
 public class FrameService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameService.class);
 
     private final FrameRepository repository;
     private final FrameHistoryRepository historyRepository;
@@ -72,7 +77,9 @@ public class FrameService {
 
     @Transactional
     public FrameResponse createFrame(CreateFrameRequest request) {
-        return createFrame(request, HistoryEventType.CREATED, HistorySource.MANUAL);
+        FrameResponse response = createFrame(request, HistoryEventType.CREATED, HistorySource.MANUAL);
+        LOGGER.info("Frame created frameId={}", LogValueSanitizer.sanitize(response.frameId()));
+        return response;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -153,7 +160,13 @@ public class FrameService {
             HistorySource.MANUAL,
             changes
         ));
-        return mapper.toResponse(saved);
+        FrameResponse response = mapper.toResponse(saved);
+        LOGGER.info(
+            "Frame updated frameId={} changedFields={}",
+            LogValueSanitizer.sanitize(response.frameId()),
+            changes.size()
+        );
+        return response;
     }
 
     @Transactional(readOnly = true)

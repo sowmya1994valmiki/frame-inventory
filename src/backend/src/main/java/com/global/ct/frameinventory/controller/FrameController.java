@@ -16,11 +16,12 @@ import com.global.ct.frameinventory.exception.InvalidFrameRequestException;
 import com.global.ct.frameinventory.service.FrameCsvImportService;
 import com.global.ct.frameinventory.service.FrameService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +39,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/frames")
 public class FrameController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameController.class);
 
     private static final Set<String> SORT_FIELDS = Set.of(
         "frameId", "createdDate", "modifiedDate", "mediaType", "format", "environment", "status"
@@ -64,6 +67,7 @@ public class FrameController {
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FrameCsvImportSummary importCsv(@RequestPart("file") MultipartFile file) {
+        LOGGER.info("CSV import requested sizeBytes={}", file.getSize());
         return csvImportService.importCsv(file);
     }
 

@@ -27,10 +27,14 @@ import com.global.ct.frameinventory.repository.FrameHistoryRepository;
 import com.global.ct.frameinventory.repository.FrameRepository;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import jakarta.persistence.EntityManager;
 
+@ExtendWith(OutputCaptureExtension.class)
 class FrameServiceTest {
 
     private final FrameRepository repository = mock(FrameRepository.class);
@@ -97,6 +101,50 @@ class FrameServiceTest {
     }
 
     @Test
+    void logsSuccessfulManualCreationWithSanitizedFrameId(CapturedOutput output) {
+        CreateFrameRequest request = minimalRequest("created\nframe");
+        when(repository.existsById(request.frameId())).thenReturn(false);
+        when(repository.saveAndFlush(any(Frame.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.createFrame(request);
+
+        assertThat(output).contains("Frame created frameId=created_frame");
+    }
+
+    @Test
+    void doesNotLogEachImportedFrame(CapturedOutput output) {
+        CreateFrameRequest request = minimalRequest("imported-frame");
+        when(repository.existsById(request.frameId())).thenReturn(false);
+        when(repository.saveAndFlush(any(Frame.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.createImportedFrame(request);
+
+        assertThat(output).doesNotContain("Frame created frameId=imported-frame");
+    }
+
+    @Test
+    void noOpUpdateDoesNotProduceOperationalLog(CapturedOutput output) {
+        CreateFrameRequest createRequest = minimalRequest("unchanged-log");
+        Frame existing = new FrameMapper().toNewEntity(
+            createRequest,
+            LocalDateTime.of(2026, 8, 29, 11, 0)
+        );
+        UpdateFrameRequest updateRequest = new UpdateFrameRequest(
+            createRequest.mediaType(), createRequest.format(), createRequest.environment(),
+            createRequest.status(), createRequest.statusReason(), createRequest.location(),
+            createRequest.site(), createRequest.technical(), createRequest.commercial(),
+            createRequest.integrations()
+        );
+        when(repository.findOneByFrameId("unchanged-log")).thenReturn(Optional.of(existing));
+
+        service.replaceFrame("unchanged-log", updateRequest);
+
+        assertThat(output).doesNotContain("Frame updated frameId=unchanged-log");
+    }
+
+    @Test
     void getReturnsStoredFrameIdCasingForCaseInsensitiveLookup() {
         CreateFrameRequest createRequest = minimalRequest("Stored-Case");
         Frame existing = new FrameMapper().toNewEntity(
@@ -112,8 +160,8 @@ class FrameServiceTest {
     }
 
     @Test
-    void updatePreservesStoredFrameIdCasingForCaseInsensitiveLookup() {
-        CreateFrameRequest createRequest = minimalRequest("Stored-Case");
+    void updatePreservesStoredFrameIdCasingAndLogsChangeCount(CapturedOutput output) {
+        CreateFrameRequest createRequest = minimalRequest("Stored-\nCase");
         Frame existing = new FrameMapper().toNewEntity(
             createRequest,
             LocalDateTime.of(2026, 8, 29, 11, 0)
@@ -129,8 +177,9 @@ class FrameServiceTest {
 
         var response = service.replaceFrame("stored-case", updateRequest);
 
-        assertThat(response.frameId()).isEqualTo("Stored-Case");
+        assertThat(response.frameId()).isEqualTo("Stored-\nCase");
         assertThat(response.status()).isEqualTo("INACTIVE");
+        assertThat(output).contains("Frame updated frameId=Stored-_Case changedFields=1");
         verify(repository).findOneByFrameId("stored-case");
         verify(historyRepository).save(any(FrameHistory.class));
     }

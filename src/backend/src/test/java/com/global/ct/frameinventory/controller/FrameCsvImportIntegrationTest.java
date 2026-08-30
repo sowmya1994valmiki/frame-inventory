@@ -237,6 +237,18 @@ class FrameCsvImportIntegrationTest {
     }
 
     @Test
+    void logsCsvImportReceiptUsingSizeWithoutFilename(CapturedOutput output) throws Exception {
+        String csv = REQUIRED_HEADERS + "\n"
+            + "logged-upload,DIGITAL,D6,LIVE,W1J 9DZ,SITE-1,London,London\n";
+
+        importCsv(csv).andExpect(status().isOk());
+
+        assertThat(output)
+            .contains("CSV import requested sizeBytes=" + csv.getBytes(StandardCharsets.UTF_8).length)
+            .doesNotContain("frames.csv");
+    }
+
+    @Test
     void rejectsMissingRequiredHeaders() throws Exception {
         String csv = "frame_id,type_classic_digital,format,status,postcode,site_no,town\n"
             + "missing-region,DIGITAL,D6,LIVE,W1J 9DZ,SITE-1,London\n";
