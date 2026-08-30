@@ -57,6 +57,18 @@ class FrameHistoryRollbackIntegrationTest {
     }
 
     @Test
+    void rollsBackImportedFrameWhenHistoryPersistenceFails() {
+        CreateFrameRequest request = createRequest("import-rollback");
+        failHistoryPersistence();
+
+        assertThatThrownBy(() -> service.createImportedFrame(request))
+            .isInstanceOf(DataIntegrityViolationException.class)
+            .hasMessage("history insert failed");
+
+        assertThat(frameRepository.existsById("import-rollback")).isFalse();
+    }
+
+    @Test
     void rollsBackFrameUpdateWhenHistoryPersistenceFails() {
         CreateFrameRequest createRequest = createRequest("update-rollback");
         Frame frame = mapper.toNewEntity(
@@ -83,6 +95,8 @@ class FrameHistoryRollbackIntegrationTest {
 
     private void failHistoryPersistence() {
         when(historyRepository.save(any(FrameHistory.class)))
+            .thenThrow(new DataIntegrityViolationException("history insert failed"));
+        when(historyRepository.saveAndFlush(any(FrameHistory.class)))
             .thenThrow(new DataIntegrityViolationException("history insert failed"));
     }
 

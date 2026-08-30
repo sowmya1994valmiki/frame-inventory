@@ -42,6 +42,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
@@ -71,6 +72,19 @@ public class FrameService {
 
     @Transactional
     public FrameResponse createFrame(CreateFrameRequest request) {
+        return createFrame(request, HistoryEventType.CREATED, HistorySource.MANUAL);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public FrameResponse createImportedFrame(CreateFrameRequest request) {
+        return createFrame(request, HistoryEventType.IMPORTED, HistorySource.CSV_UPLOAD);
+    }
+
+    private FrameResponse createFrame(
+        CreateFrameRequest request,
+        HistoryEventType eventType,
+        HistorySource source
+    ) {
         if (repository.existsById(request.frameId())) {
             throw new DuplicateFrameException(request.frameId());
         }
@@ -87,11 +101,11 @@ public class FrameService {
             throw exception;
         }
         entityManager.refresh(saved);
-        historyRepository.save(new FrameHistory(
+        historyRepository.saveAndFlush(new FrameHistory(
             saved,
-            HistoryEventType.CREATED,
+            eventType,
             occurredAt,
-            HistorySource.MANUAL,
+            source,
             Map.of()
         ));
         return mapper.toResponse(saved);

@@ -6,16 +6,19 @@ import java.util.Locale;
 import java.util.Set;
 
 import com.global.ct.frameinventory.dto.CreateFrameRequest;
+import com.global.ct.frameinventory.dto.FrameCsvImportSummary;
 import com.global.ct.frameinventory.dto.FrameHistoryResponse;
 import com.global.ct.frameinventory.dto.FramePageResponse;
 import com.global.ct.frameinventory.dto.FrameResponse;
 import com.global.ct.frameinventory.dto.FrameSearchCriteria;
 import com.global.ct.frameinventory.dto.UpdateFrameRequest;
 import com.global.ct.frameinventory.exception.InvalidFrameRequestException;
+import com.global.ct.frameinventory.service.FrameCsvImportService;
 import com.global.ct.frameinventory.service.FrameService;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 
@@ -40,9 +45,11 @@ public class FrameController {
     );
 
     private final FrameService service;
+    private final FrameCsvImportService csvImportService;
 
-    public FrameController(FrameService service) {
+    public FrameController(FrameService service, FrameCsvImportService csvImportService) {
         this.service = service;
+        this.csvImportService = csvImportService;
     }
 
     @PostMapping
@@ -54,6 +61,11 @@ public class FrameController {
             .encode()
             .toUri();
         return ResponseEntity.created(location).body(response);
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public FrameCsvImportSummary importCsv(@RequestPart("file") MultipartFile file) {
+        return csvImportService.importCsv(file);
     }
 
     @GetMapping("/{frameId}")

@@ -44,6 +44,14 @@ class FrameApiExceptionHandler {
         return problem(HttpStatus.BAD_REQUEST, "Invalid request", exception.getMessage(), request);
     }
 
+    @ExceptionHandler(InvalidCsvFileException.class)
+    ResponseEntity<ProblemDetail> handleInvalidCsv(
+        InvalidCsvFileException exception,
+        HttpServletRequest request
+    ) {
+        return problem(HttpStatus.BAD_REQUEST, "Invalid CSV file", exception.getMessage(), request);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ProblemDetail> handleValidation(
         MethodArgumentNotValidException exception,
