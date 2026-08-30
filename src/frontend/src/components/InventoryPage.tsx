@@ -22,11 +22,12 @@ type Props = {
   successMessage: string | null
   focusOnMount: boolean
   onNew: () => void
+  onImport: () => void
   onView: (frameId: string) => void
   onEdit: (frameId: string) => void
 }
 
-export function InventoryPage({ successMessage, focusOnMount, onNew, onView, onEdit }: Props) {
+export function InventoryPage({ successMessage, focusOnMount, onNew, onImport, onView, onEdit }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const [queryInput, setQueryInput] = useState('')
   const [filters, setFilters] = useState<FilterValues>(EMPTY_FILTERS)
@@ -143,7 +144,10 @@ export function InventoryPage({ successMessage, focusOnMount, onNew, onView, onE
           <h1 ref={headingRef} tabIndex={-1}>Frames</h1>
           <p className="page-meta">{result && !visibleError ? `${result.totalElements.toLocaleString()} frames` : 'Search the frame inventory'}</p>
         </div>
-        <button className="button button-primary" type="button" onClick={onNew}><PlusIcon /> New frame</button>
+        <div className="page-header-actions">
+          <button className="button" type="button" onClick={onImport}><UploadIcon /> Import CSV</button>
+          <button className="button button-primary" type="button" onClick={onNew}><PlusIcon /> New frame</button>
+        </div>
       </header>
       {successMessage && <div className="success-message" role="status"><CheckIcon /> {successMessage}</div>}
       <div className="inventory-layout">
@@ -213,6 +217,12 @@ function AlertIcon() {
 function PlusIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
     <path d="M12 5v14M5 12h14" />
+  </svg>
+}
+
+function UploadIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5" />
   </svg>
 }
 

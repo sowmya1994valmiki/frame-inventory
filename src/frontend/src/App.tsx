@@ -4,10 +4,12 @@ import { AppShell } from './components/AppShell'
 import { FrameDetailPage } from './components/FrameDetailPage'
 import { FrameEditorPage } from './components/FrameEditorPage'
 import { InventoryPage } from './components/InventoryPage'
+import { CsvImportPage } from './components/CsvImportPage'
 
 type Screen =
   | { name: 'inventory' }
   | { name: 'create' }
+  | { name: 'import' }
   | { name: 'detail'; frameId: string }
   | { name: 'edit'; frameId: string }
 
@@ -28,6 +30,7 @@ function App() {
   }
 
   const breadcrumbs = screen.name === 'create' ? ['Frames', 'New']
+    : screen.name === 'import' ? ['Frames', 'Import CSV']
     : screen.name === 'edit' ? ['Frames', 'Edit']
       : screen.name === 'detail' ? ['Frames', screen.frameId] : ['Frames']
 
@@ -36,8 +39,11 @@ function App() {
       {screen.name === 'inventory' ? (
         <InventoryPage successMessage={successMessage} focusOnMount={restoreInventoryFocus}
           onNew={() => openScreen({ name: 'create' })}
+          onImport={() => openScreen({ name: 'import' })}
           onView={(frameId) => openScreen({ name: 'detail', frameId })}
           onEdit={(frameId) => openScreen({ name: 'edit', frameId })} />
+      ) : screen.name === 'import' ? (
+        <CsvImportPage onViewInventory={() => setScreen({ name: 'inventory' })} />
       ) : screen.name === 'detail' ? (
         <FrameDetailPage frameId={screen.frameId} onBack={() => setScreen({ name: 'inventory' })} />
       ) : (

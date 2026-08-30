@@ -109,6 +109,20 @@ export type FramePage = {
   totalPages: number
 }
 
+export type FrameCsvImportError = {
+  rowNumber: number
+  frameId: string | null
+  reason: string
+}
+
+export type FrameCsvImportSummary = {
+  totalRows: number
+  created: number
+  duplicates: number
+  failed: number
+  errors: FrameCsvImportError[]
+}
+
 export type FrameFilters = {
   status: '' | 'LIVE' | 'INACTIVE'
   mediaType: string
@@ -162,6 +176,16 @@ export function createFrame(payload: CreateFrameRequest): Promise<Frame> {
 
 export function updateFrame(frameId: string, payload: UpdateFrameRequest): Promise<Frame> {
   return request<Frame>(`/api/frames/${encodeURIComponent(frameId)}`, jsonRequest('PUT', payload))
+}
+
+export function importFrames(file: File): Promise<FrameCsvImportSummary> {
+  const body = new FormData()
+  body.append('file', file)
+  return request<FrameCsvImportSummary>('/api/frames/import', {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+    body,
+  })
 }
 
 function addIfPresent(params: URLSearchParams, key: string, value: string) {
